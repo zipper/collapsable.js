@@ -1,0 +1,14 @@
+{
+	"name": "jquery.collapsable",
+	"version": "1.0.0",
+	"homepage": "https://github.com/peckadesign/jquery.collapsable",
+	"authors": [
+		"PeckaDesign, s.r.o <support@peckadesign.cz>",
+		"Radek Šerý <radek.sery@peckadesign.cz>"
+	],
+	"main": "jquery.collapsable.js",
+	"license": "MIT",
+	"dependencies": {
+		"jquery": ">=1.7"
+	}
+}
