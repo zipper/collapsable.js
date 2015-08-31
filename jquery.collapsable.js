@@ -24,7 +24,9 @@
 			opts.onCollapse.call($parent);
 
 		if(opts.fx == 'slide')
-			$box.slideUp(opts.fxSpeed, function() { if(typeof opts.onCollapsed == 'function') opts.onCollapsed.call($parent) });
+			$box
+				.css({display: 'block'})
+				.slideUp(opts.fxSpeed, function() { if(typeof opts.onCollapsed == 'function') opts.onCollapsed.call($parent) });
 		else if(opts.fx == 'toggle') {
 			$box.hide();
 			if(typeof opts.onCollapsed == 'function')
@@ -47,8 +49,11 @@
 			else
 				fragment = '';
 
-			if(opts.extLinks) {
-				$(opts.extLinks).bind('click', function(e) {
+			if(opts.extLinks && ($el = $(opts.extLinks)).length) {
+				if ($el[0].tagName.toUpperCase() != 'A')
+					$el = $el.find('a');
+
+				$el.bind('click', function(e) {
 					var $target = $($(this).attr('href'));
 
 					if ($target.hasClass(opts.classNames.collapsed)) {
