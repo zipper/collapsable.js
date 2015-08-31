@@ -74,7 +74,7 @@
 			if(opts.collapseAll)
 				$(opts.collapseAll).bind('click', function() { methods.collapseAll.call($boxSet); return false; });
 
-			if(opts.grouped && !opts.collapsableAll) {
+			if(opts.grouped && !opts.collapsableAll && (fragment === '' || $boxSet.filter('#' + fragment).length === 0)) {
 				var $visible = $boxSet.filter('.' + opts.classNames.defaultExpanded);
 				if($visible.length == 0)
 					$boxSet.first().addClass(opts.classNames.defaultExpanded);
