@@ -42,6 +42,7 @@
 		init: function(options) {
 			var opts = $.extend(true, {}, $.fn.collapsable.defaults, options);
 			var $boxSet = $(this);
+			var $extLinks = opts.extLinks ? $(opts.extLinks) : $([]);
 
 			var fragment = window.location.href;
 			if ((i = fragment.search(/#/)) != -1)
@@ -49,11 +50,11 @@
 			else
 				fragment = '';
 
-			if(opts.extLinks && ($el = $(opts.extLinks)).length) {
-				if ($el[0].tagName.toUpperCase() != 'A')
-					$el = $el.find('a');
+			if($extLinks.length) {
+				if ($extLinks[0].tagName.toUpperCase() != 'A')
+					$extLinks = $extLinks.find('a');
 
-				$el.bind('click', function(e) {
+				$extLinks.bind('click', function(e) {
 					var $target = $($(this).attr('href'));
 
 					if ($target.hasClass(opts.classNames.collapsed)) {
@@ -96,6 +97,8 @@
 				if(opts.defaultOpen || $this.hasClass(opts.classNames.defaultExpanded) || $this.attr('id') == fragment) {
 					$this.removeClass(opts.classNames.collapsed).addClass(opts.classNames.expanded);
 
+					$extLinks.filter('[href=#' + $this.attr('id') + ']').addClass(opts.classNames.extLinkActive);
+
 					if(typeof opts.onExpanded == 'function')
 						opts.onExpanded.call($this);
 				}
@@ -110,14 +113,14 @@
 						opts = data.opts;
 
 					if($this.hasClass(opts.classNames.expanded) && (!opts.grouped || opts.collapsableAll)) {
-						$(opts.extLinks).filter('[href=#' + $this.attr('id') + ']').removeClass(opts.classNames.extLinkActive);
+						$extLinks.filter('[href=#' + $this.attr('id') + ']').removeClass(opts.classNames.extLinkActive);
 
 						$this.removeClass(opts.classNames.expanded).addClass(opts.classNames.collapsed);
 						collapseBox(opts, $box, $this);
 					}
 					else {
 						if(opts.grouped) {
-							$(opts.extLinks).removeClass(opts.classNames.extLinkActive);
+							$extLinks.removeClass(opts.classNames.extLinkActive);
 
 							var $visible = $boxSet.filter('.' + opts.classNames.expanded);
 							$boxSet.removeClass(opts.classNames.expanded).addClass(opts.classNames.collapsed);
@@ -126,7 +129,7 @@
 							}
 						}
 
-						$(opts.extLinks).filter('[href=#' + $this.attr('id') + ']').addClass(opts.classNames.extLinkActive);
+						$extLinks.filter('[href=#' + $this.attr('id') + ']').addClass(opts.classNames.extLinkActive);
 
 						$this.removeClass(opts.classNames.collapsed).addClass(opts.classNames.expanded);
 						expandBox(opts, $box, $this);
