@@ -4,18 +4,20 @@
 		if(typeof opts.onExpand == 'function')
 			opts.onExpand.call($parent);
 
-		if(opts.fx == 'slide')
+		if(opts.fx == 'slide') {
 			$box
-				.slideDown(opts.fxSpeed, function() { if(typeof opts.onExpanded == 'function') opts.onExpanded.call($parent) })
+				.slideDown(opts.collapseDelay, function() { if(typeof opts.onExpanded == 'function') opts.onExpanded.call($parent) })
 				.css({display: 'block'});
-		else if(opts.fx == 'toggle') {
-			$box.show();
-			if(typeof opts.onExpanded == 'function')
-				opts.onExpanded.call($parent);
 		}
 		else {
-			if(typeof opts.onExpanded == 'function')
-				opts.onExpanded.call($parent);
+			if(opts.fx == 'toggle') {
+				$box.show();
+
+				if(typeof opts.onExpanded == 'function') {
+					t = setTimeout(function () {
+						opts.onExpanded.call($parent);
+					}, opts.collapseDelay);}
+			}
 		}
 	}
 
@@ -23,18 +25,22 @@
 		if(typeof opts.onCollapse == 'function')
 			opts.onCollapse.call($parent);
 
-		if(opts.fx == 'slide')
+		if(opts.fx == 'slide') {
 			$box
 				.css({display: 'block'})
-				.slideUp(opts.fxSpeed, function() { if(typeof opts.onCollapsed == 'function') opts.onCollapsed.call($parent) });
-		else if(opts.fx == 'toggle') {
-			$box.hide();
-			if(typeof opts.onCollapsed == 'function')
-				opts.onCollapsed.call($parent)
+				.slideUp(opts.collapseDelay, function () {
+					if (typeof opts.onCollapsed == 'function') opts.onCollapsed.call($parent)
+				});
 		}
 		else {
-			if(typeof opts.onCollapsed == 'function')
-				opts.onCollapsed.call($parent)
+			if(opts.fx == 'toggle')
+				$box.hide();
+
+			if(typeof opts.onCollapsed == 'function') {
+				t = setTimeout(function () {
+					opts.onCollapsed.call($parent);
+				}, opts.collapseDelay);
+			}
 		}
 	}
 
@@ -43,12 +49,17 @@
 			var opts = $.extend(true, {}, $.fn.collapsable.defaults, options);
 			var $boxSet = $(this);
 			var $extLinks = opts.extLinks ? $(opts.extLinks) : $([]);
+			var spinnerExt = $.nette ? $.nette.ext('spinner') : null;
 
 			var fragment = window.location.href;
 			if ((i = fragment.search(/#/)) != -1)
 				fragment = fragment.substring(i+1);
 			else
 				fragment = '';
+
+			if(opts.fx === 'slide' && ! opts.collapseDelay) {
+				opts.collapseDelay = 500;
+			}
 
 			if($extLinks.length) {
 				if ($extLinks[0].tagName.toUpperCase() != 'A')
@@ -57,15 +68,15 @@
 				$extLinks.bind('click', function(e) {
 					var $target = $($(this).attr('href'));
 
+					if (opts.extLinksPreventDefault)
+						e.preventDefault();
+
 					if ($target.hasClass(opts.classNames.collapsed)) {
 						var $control = $target.find(opts.control);
 						var $btn = ($control[0].tagName.toUpperCase() == 'A') ? $control : $control.find('a');
 
 						$btn.trigger('click');
 					}
-
-					if (opts.extLinksPreventDefault)
-						return false;
 				});
 			}
 
@@ -79,6 +90,11 @@
 				var $visible = $boxSet.filter('.' + opts.classNames.defaultExpanded);
 				if($visible.length == 0)
 					$boxSet.first().addClass(opts.classNames.defaultExpanded);
+			}
+
+			if ((fragment && ($fragment = $boxSet.filter('#' + fragment)).length)) {
+				$boxSet.filter('.' + opts.classNames.defaultExpanded).removeClass(opts.classNames.defaultExpanded);
+				$fragment.addClass(opts.classNames.defaultExpanded);
 			}
 
 			return $boxSet.each(function() {
@@ -107,7 +123,7 @@
 					$this.removeClass(opts.classNames.expanded).addClass(opts.classNames.collapsed);
 				}
 
-				$this.find($btn).click(function() {
+				$this.find($btn).bind('click', function(e) {
 					var data = $this.data('collapsable');
 					if (data)
 						opts = data.opts;
@@ -135,8 +151,12 @@
 						expandBox(opts, $box, $this);
 					}
 
+					if($(this).hasClass('ajax') && spinnerExt) {
+						$box.append(spinnerExt.$spinnerHtml);
+					}
+
 					if(opts.preventDefault)
-						return false;
+						e.preventDefault();
 				});
 
 				$(this).data('collapsable', {opts: opts});
@@ -237,7 +257,7 @@
 		control:          '.ca-control', // selektor ovladaciho prvku, muze se v ramci boxu i opakovat
 		box:              '.ca-box',     // selektor pro skryvanou/zobrazovanou cast
 		fx:               false,         // [ false (jen zmena class) / toggle (prepinani show/hide) / slide (animace vysky) ]
-		fxSpeed:          500,           // ma smysl pouze v kombinaci s fx
+		collapseDelay:    0,             // doba trvání efektu, případně zpoždění volání onExpanded a onCollapsed funkcí; výchozí hodnota 500, pokud je fx === 'slide'
 
 		grouped:          false,         // pokud je true, pak bude otevreny vzdy jen jeden box ze skupiny
 		defaultOpen:      false,         // otevreny/zavreny po inicializaci
