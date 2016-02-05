@@ -12,11 +12,12 @@
 		else {
 			if(opts.fx == 'toggle') {
 				$box.show();
+			}
 
-				if(typeof opts.onExpanded == 'function') {
-					t = setTimeout(function () {
-						opts.onExpanded.call($parent);
-					}, opts.collapseDelay);}
+			if(typeof opts.onExpanded == 'function') {
+				t = setTimeout(function () {
+					opts.onExpanded.call($parent);
+				}, opts.collapseDelay);
 			}
 		}
 	}
@@ -33,8 +34,9 @@
 				});
 		}
 		else {
-			if(opts.fx == 'toggle')
+			if(opts.fx == 'toggle') {
 				$box.hide();
+			}
 
 			if(typeof opts.onCollapsed == 'function') {
 				t = setTimeout(function () {
