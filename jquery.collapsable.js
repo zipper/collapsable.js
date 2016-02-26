@@ -7,29 +7,35 @@
  *
  * @version 2.0.0
  *
- * @todo add aria support
  */
 ;(function($) {
 
+	// @todo: aria data atributy, viz http://heydonworks.com/practical_aria_examples/
+	// @todo: dodělat vlastní eventy, init.collapsable, collapseAll/expandAll.collapsable, destroy.collapsable - může se hodit obnovení this.$boxSet, protože to chceme volat nad ním
+	// @todo: u expandAll.collapsable vymyslet preventDefault - měl by zabránit otevření všech boxů? analogicky i pro ostatní
+	// @todo: zamyslet se nad tím, co způsobí nahrazení callbacků za eventy v případě ajaxu, kdy se collapsable nahradí
+
+	// @feature: díky předávání originalEvent do expand.collapsable (atd.) je možné použít e.originalEvent.preventDefault() místo defaults.preventDefault! cool, ne?!
+
 	/**
 	 * Collapsable defaults
-	 * @type {{control: string, box: string, event: string, fx: boolean, fxDuration: number, grouped: boolean, collapsableAll: boolean, preventDefault: boolean, extLinks: {selector: null, preventDefault: boolean, activeClass: string}, classNames: {expanded: string, collapsed: string, defaultExpanded: string}, onInit: null, onExpand: null, onExpanded: null, onCollapse: null, onCollapsed: null}}
+	 * @type {{control: string, box: string, event: string, fx: boolean, fxDuration: number, grouped: boolean, collapsableAll: boolean, preventDefault: boolean, extLinks: {selector: null, preventDefault: boolean, activeClass: string}, classNames: {expanded: string, collapsed: string, defaultExpanded: string}}}
 	 */
 	var defaults = {
 		control: '.ca-control', // CSS selector for control element
 		box: '.ca-box',         // CSS selector for hideable element (box)
 		event: 'click',         // event triggering the expand/collapse
 
-		fx: false,              // effect for expanding/collapsing, [ false | toggle | slide ]
+		fx: false,              // effect for expanding/collapsing, [ false | toggle | slide | fade | {Object} ]
 		fxDuration: 0,          // duration of the effect, affects delay between onExpand (onCollapse) and onExpanded (onCollapsed) callbacks; default value is 500 when fx set to slide
 
 		grouped: false,         // determines, if there could be more than one expanded box in same time; related to jQuery set on which initialized
 		collapsableAll: true,   // possibility of collapsing all boxes from set
-		preventDefault: true,   // whether prevenDefault should be called when specified event occurs on control
+		preventDefault: true,   // whether prevenDefault should be called when specified event occurs on control; even if false, you may use e.originalEvent.preventDefault() inside collapsable event handlers
 
 		extLinks: {             // external links for operating collapsable set, can be anywhere else in DOM
 			selector: null,     // CSS selector for external links; it has to be anchors; the click event is binded
-			//openOnly: true    // @todo create possibility for extLinks would only open the boxes?
+			//openOnly: true    // @todo create possibility for extLinks would only open the boxes? for now, you might achieve this using callbacks and returning false
 			preventDefault: false, // whether preventDefault is called on extLinks click
 			activeClass: 'ca-ext-active' // class which would be toggled on external link when associated box is expanded or collapsed
 		},
@@ -38,14 +44,9 @@
 			expanded:        'ca-expanded',
 			collapsed:       'ca-collapsed',
 			defaultExpanded: 'ca-default-expanded'
-		},
+		}
 
-		// callbacks
-		onInit:      null,      // immediately after initialization
-		onExpand:    null,      // called when box expansion starts
-		onExpanded:  null,      // called when box expansion ends
-		onCollapse:  null,      // called when box collapsion starts
-		onCollapsed: null       // called when box collapsion ends
+		// callbacks are no more available, use events instead
 	};
 
 
@@ -79,7 +80,7 @@
 
 	/**
 	 * Generates unique id for new Collapsable object
-	 * @returns {String}  uid
+	 * @returns {String}  New uid
 	 * @private
 	 */
 	function getUid() {
@@ -89,8 +90,8 @@
 
 	/**
 	 * Handles public method called on jQuery object using adapter
-	 * @param {String} action - collapseAll|expandAll|destroy @todo destroy
-	 * @param {Object} event  - event (object) passed by user
+	 * @param {String} action - CollapseAll|expandAll|destroy @todo destroy
+	 * @param {Object} event  - Event (object) passed by user
 	 * @private
 	 */
 	function handlePublicMethods(action, event) {
@@ -201,8 +202,8 @@
 	 * @private
 	 */
 	function handleDefaultExpanded() {
-		var event = { type: 'collapsable.init' };
-		var opts = this.opts; // shortcut
+		var event;
+		var opts = this.opts;
 		var items = this.items;
 
 		// save fx so it can be set back
@@ -215,6 +216,7 @@
 		var l = items.length;
 		var force = ! opts.collapsableAll; // if we can't collapse all, we force expanding the first one chosen in prepareDefaultExpanded, @todo potentially force-open the one from URL instead of first, if hash set? or maybe try to open some without forcing and only if failed, do force-open (would require two passes?
 		for (var i = 0; i < l; i++) {
+			event = $.Event('init.collapsable', items[i].$collapsable); // @todo: dává toto smysl? neměla by event být společná? ukládá se opravdu do originalEvent?
 			if (items[i].defaultExpanded) {
 				items[i].expand(event, force);
 				force = false;
@@ -228,8 +230,39 @@
 
 
 	/**
-	 * @param {jQuery} $boxSet - set of object to be initilized
-	 * @param {Object} options - see plugin defaults
+	 * It is possible to set the `fx` options to `slide` or `fade` - these are shortcuts for objects with
+	 * `{ expand: 'slideDown', collapse: 'slideUp' }` or `{ expand: 'fadeIn', collapse: 'fadeOut' }`. This function
+	 * converts those strings into objects. It also sets default duration for these effects to 500ms.
+	 * @this Collapsable
+	 * @private
+	 */
+	function prepareFxOpt() {
+		var opts = this.opts;
+
+		// default fxDuration in case of slide function
+		if (opts.fx === 'slide') {
+			opts.fx = {
+				expand: 'slideDown',
+				collapse: 'slideUp'
+			};
+		} else if (this.opts.fx === 'fade') {
+			opts.fx = {
+				expand: 'fadeIn',
+				collapse: 'fadeOut'
+			};
+		}
+
+		if (opts.fx === 'slide' || opts.fx === 'fade') {
+			opts.fxDuration = opts.fxDuration || 500;
+		}
+	}
+
+
+	/**
+	 * Represents set of collapsable elements which were initialized by one call with same options
+	 * @name Collapsable
+	 * @param {jQuery} $boxSet - Set of object to be initilized
+	 * @param {Object} options - See plugin defaults
 	 * @returns {Collapsable}
 	 * @constructor
 	 */
@@ -242,12 +275,9 @@
 		this.uid = getUid();
 		this.promiseOpen = false;
 
-		// default fxDuration in case of slide function
-		if (this.opts.fx === 'slide' && ! this.opts.fxDuration) {
-			this.opts.fxDuration = 500;
-		}
-
 		handleExtLinks.call(this);
+
+		prepareFxOpt.call(this);
 
 		$boxSet.each(function() {
 			var collapsable = new CollapsableItem(that, this);
@@ -283,7 +313,7 @@
 
 	/**
 	 * Expands all collapsed items
-	 * @param {Event} event - event to be passed to onExpand and onExpanded callbacks
+	 * @param {Event} event - Event to be passed to onExpand and onExpanded callbacks
 	 */
 	Collapsable.prototype.expandAll = function(event) {
 		// if grouped, we only want to expand one (first) box, or none if already expanded
@@ -309,7 +339,7 @@
 
 	/**
 	 * Collapses all expanded items
-	 * @param {Event} event - event to be passed to onCollapse and onCollapsed callbacks
+	 * @param {Event} event - Event to be passed to onCollapse and onCollapsed callbacks
 	 */
 	Collapsable.prototype.collapseAll = function(event) {
 		event = event || { type: 'collapsable.collapseAll' };
@@ -325,8 +355,8 @@
 
 	/**
 	 * Single item in Collapsable object, represents one collapsable element in page
-	 * @param {Collapsable} parent - reference to group of Collapsable elements initialized in same time, sharing same options
-	 * @param {jQuery} element     - one instance of collapsable element
+	 * @param {Collapsable} parent - Reference to group of Collapsable elements initialized in same time, sharing same options
+	 * @param {jQuery} element     - One instance of collapsable element
 	 * @returns {CollapsableItem}
 	 * @constructor
 	 */
@@ -378,124 +408,112 @@
 	};
 
 
-	// @todo přepsat expand a collapse funkce do jedné?
+	/**
+	 *
+	 * @param {String} action - Either `expand` or `collapse`
+	 * @param {Event} event - Event to be passed to callbacks
+	 * @returns {boolean}
+	 */
+	function handleExpandCollapse(action, event) {
+		var opts = this.parent.opts;
+		var that = this;
+		var trigger = 'expanded';
+		var addClass = opts.classNames.expanded;
+		var removeClass = opts.classNames.collapsed;
+
+		// capitalize first letter
+		if (action === 'collapse') {
+			trigger = 'collapsed';
+			addClass = opts.classNames.collapsed;
+			removeClass = opts.classNames.expanded;
+		}
+
+		// update extLinks
+		this.parent.$extLinks
+			.filter('[href=#' + this.id + ']')
+			[action === 'expand' ? 'addClass' : 'removeClass'](opts.extLinks.activeClass);
+
+		// update classes on collapsable element itself
+		this.$collapsable
+			.removeClass(removeClass)
+			.addClass(addClass);
+
+		// actually toggle the box state
+		if(typeof opts.fx === 'object') {
+			this.$box[opts.fx[action]](opts.fxDuration, function () {
+				that.$collapsable.trigger(trigger + '.collapsable');
+			});
+		}
+		else {
+			if(opts.fx == 'toggle') {
+				this.$box[action === 'expand' ? 'show' : 'hide']();
+			}
+
+			var t = setTimeout(function () {
+				that.$collapsable.trigger(trigger + '.collapsable');
+			}, opts.fxDuration);
+		}
+
+		return true;
+	}
+
 	/**
 	 * Expands single CollapsableItem; could be prevented by returning false from onExpand callback
-	 * @param {Object} event  - event passed to function
-	 * @param {Boolean} force - forcing CollapsableItem to expand regardless on onExpand return value, should be used only on initilization (force open default expanded item when collapsableAll === false)
-	 * @returns {Boolean}     - returns if CollapsableItem has been expanded or not
+	 * @param {Object} originalEvent  - Event passed to function
+	 * @param {Boolean} force - Forcing CollapsableItem to expand regardless on onExpand return value, should be used only on initilization (force open default expanded item when collapsableAll === false)
+	 * @returns {Boolean}     - Returns if CollapsableItem has been expanded or not
 	 */
-	CollapsableItem.prototype.expand = function(event, force) {
+	CollapsableItem.prototype.expand = function(originalEvent, force) {
 		var opts = this.parent.opts;
 		var expandedItem = this.parent.getExpanded(); // grouped -> max one expanded item
 
 		this.parent.promiseOpen = true; // allows us to collapse expanded item even if there might be collapseAll === false option
-
 		if (opts.grouped) {
 			// before expanding, we have to collapse previously opened item
-
 			// if grouped element hasn't collapsed, we can't continue
-			if (expandedItem.length && this.parent.items[expandedItem[0]].collapse(event, force) === false) {
+			if (expandedItem.length && this.parent.items[expandedItem[0]].collapse(originalEvent, force) === false) {
 				this.parent.promiseOpen = false;
 				return false;
 			}
 		}
-
 		this.parent.promiseOpen = false;
 
-		if(typeof opts.onExpand == 'function') {
-			var expand = opts.onExpand.call(this.$collapsable, event);
-			if (expand === false && ! force) {
-				// collapsableAll === false && grouped === true, so if box has not opened, we must make sure something is opened, therefore we force-open previously opened box (simulating it has never closed in first place); if grouped
-				if (! opts.collapsableAll && opts.grouped) {
-					this.parent.items[expandedItem[0]].expand(event, true);
-				}
+		var event = $.Event('expand.collapsable', { originalEvent: originalEvent });
+		this.$collapsable.trigger(event);
 
-				return false;
-			}
-		}
-
-		this.parent.$extLinks
-			.filter('[href=#' + this.id + ']')
-			.addClass(opts.extLinks.activeClass);
-
-		this.$collapsable
-			.removeClass(opts.classNames.collapsed)
-			.addClass(opts.classNames.expanded);
-
-		var that = this;
-		if(opts.fx == 'slide') {
-			this.$box
-				.slideDown(opts.fxDuration, function() {
-					if(typeof opts.onExpanded == 'function') opts.onExpanded.call(that.$collapsable, event);
-				})
-				.css({ display: 'block' });
-		}
-		else {
-			if(opts.fx == 'toggle') {
-				this.$box.show();
+		if (event.isDefaultPrevented() && ! force) {
+			// collapsableAll === false && grouped === true -> if the box has not opened, we must make sure something is opened, therefore we force-open previously opened box (opts.grouped is true means we tried to collapse something), simulating it has never closed in first place
+			if (! opts.collapsableAll && opts.grouped) {
+				this.parent.items[expandedItem[0]].expand(originalEvent, true);
 			}
 
-			if(typeof opts.onExpanded == 'function') {
-				t = setTimeout(function () {
-					opts.onExpanded.call(that.$collapsable, event);
-				}, opts.fxDuration);
-			}
+			return false;
 		}
 
-		return true;
+		return handleExpandCollapse.call(this, 'expand', originalEvent)
 	};
 
 	/**
 	 * Collapses single CollapsableItem; could be prevented by returning false from onCollapse callback
-	 * @param {Object} event  - Event passed to function
+	 * @param {Object} originalEvent  - Event passed to function
 	 * @param {Boolean} force - Forcing CollapsableItem to collapse regardless on onCollapse return value
 	 * @returns {Boolean}     - Returns if CollapsableItem has been collapsed or not
 	 */
-	CollapsableItem.prototype.collapse = function(event, force) {
+	CollapsableItem.prototype.collapse = function(originalEvent, force) {
 		var opts = this.parent.opts;
-
 		// if we can't collapse all, we are not promised to open something and there is only one opened box, then we can't continue
 		if (! opts.collapsableAll && ! this.parent.promiseOpen && this.parent.getExpanded().length < 2) {
 			return false;
 		}
 
-		if(typeof opts.onCollapse == 'function') {
-			var collapse = opts.onCollapse.call(this.$collapsable, event);
-			if (collapse === false && ! force) {
-				return false;
-			}
+		var event = $.Event('collapse.collapsable', { originalEvent: originalEvent });
+		this.$collapsable.trigger(event);
+
+		if (event.isDefaultPrevented() && !force) {
+			return false;
 		}
 
-		this.parent.$extLinks
-			.filter('[href=#' + this.id + ']')
-			.removeClass(opts.extLinks.activeClass);
-
-		this.$collapsable
-			.removeClass(opts.classNames.expanded)
-			.addClass(opts.classNames.collapsed);
-
-		var that = this;
-		if(opts.fx == 'slide') {
-			this.$box
-				.css({ display: 'block' })
-				.slideUp(opts.fxDuration, function () {
-					if (typeof opts.onCollapsed == 'function') opts.onCollapsed.call(that.$collapsable, event);
-				});
-		}
-		else {
-			if(opts.fx == 'toggle') {
-				this.$box.hide();
-			}
-
-			if(typeof opts.onCollapsed == 'function') {
-				t = setTimeout(function () {
-					opts.onCollapsed.call(that.$collapsable, event);
-				}, opts.fxDuration);
-			}
-		}
-
-		return true;
+		return handleExpandCollapse.call(this, 'collapse', originalEvent)
 	};
 
 	/**
@@ -508,8 +526,16 @@
 
 
 	/**
+	 * The jQuery plugin namespace.
+	 * @external "jQuery.fn"
+	 * @see {@link http://learn.jquery.com/plugins The jQuery Plugin Guide}
+	 */
+
+
+	/**
 	 * jQuery adapter for Collapsable object, returns elements on which it was called, so it's chainable
-	 * @param {Object} options - options to override plugin defaults
+	 * @function external:"jQuery.fn".collapsable
+	 * @param {Object} options - Options to override plugin defaults
 	 * @returns {jQuery}
 	 */
 	$.fn.collapsable = function(options) {
@@ -519,6 +545,7 @@
 		else if (typeof options === 'object' || !options) {
 			var data =  methods.init.apply(this, arguments);
 
+			// @todo: místo tohoto bude init.collapsable nad všemi položkami dohromady?
 			if (data && typeof data.opts.onInit === 'function') {
 				var l = data.items.length;
 				for (var i = 0; i < l; i++) {
