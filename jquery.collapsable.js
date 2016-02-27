@@ -114,8 +114,6 @@
 	function handleExtLinks() {
 		var opts = this.opts;
 		if ((this.$extLinks = $(opts.extLinks.selector).filter('a')).length) {
-			var that = this;
-
 			this.$extLinks.on('click.collapsable', function (event) {
 				if (opts.extLinks.preventDefault)
 					event.preventDefault();
@@ -238,6 +236,11 @@
 		var opts = this.opts;
 
 		// default fxDuration in case of slide function
+		if (opts.fx === 'slide' || opts.fx === 'fade') {
+			opts.fxDuration = opts.fxDuration || 500;
+		}
+
+		// convert alias into objects
 		if (opts.fx === 'slide') {
 			opts.fx = {
 				expand: 'slideDown',
@@ -248,10 +251,6 @@
 				expand: 'fadeIn',
 				collapse: 'fadeOut'
 			};
-		}
-
-		if (opts.fx === 'slide' || opts.fx === 'fade') {
-			opts.fxDuration = opts.fxDuration || 500;
 		}
 	}
 
@@ -453,7 +452,6 @@
 			return;
 
 		var that = this;
-		var selector; // selector for clickable element
 		var opts = this.parent.opts; // shortcut
 
 		prepareCollapsableDOM.call(this);
@@ -484,10 +482,11 @@
 	/**
 	 * Handling common parts of expanding and collapsing
 	 * @param {String} action - Either `expand` or `collapse`
-	 * @param {Event} event - Event to be passed to event handlers
+	 * @param {Object} data - Data passed to triggered event
+	 * @param {Event} originalEvent - Event to be passed to event handlers
 	 * @returns {boolean}
 	 */
-	function handleExpandCollapse(action, event) {
+	function handleExpandCollapse(action, originalEvent, data) {
 		var opts = this.parent.opts;
 		var that = this;
 		var trigger = 'expanded';
@@ -500,6 +499,8 @@
 			addClass = opts.classNames.collapsed;
 			removeClass = opts.classNames.expanded;
 		}
+
+		var event = $.Event(trigger + '.collapsable', { customData: data, originalEvent: originalEvent });
 
 		// update extLinks
 		this.parent.$extLinks
@@ -518,7 +519,7 @@
 		// actually toggle the box state
 		if(typeof opts.fx === 'object') {
 			this.$box[opts.fx[action]](opts.fxDuration, function () {
-				that.$collapsable.trigger(trigger + '.collapsable');
+				that.$collapsable.trigger(event);
 			});
 		}
 		else {
@@ -526,8 +527,8 @@
 				this.$box[action === 'expand' ? 'show' : 'hide']();
 			}
 
-			var t = setTimeout(function () {
-				that.$collapsable.trigger(trigger + '.collapsable');
+			setTimeout(function () {
+				that.$collapsable.trigger(event);
 			}, opts.fxDuration);
 		}
 
@@ -591,7 +592,7 @@
 			return false;
 		}
 
-		return handleExpandCollapse.call(this, 'collapse', originalEvent)
+		return handleExpandCollapse.call(this, 'collapse', originalEvent);
 	};
 
 	/**
@@ -621,7 +622,7 @@
 			return methods[options].apply(this, Array.prototype.slice.call(arguments, 1));
 		}
 		else if (typeof options === 'object' || !options) {
-			var data =  methods.init.apply(this, arguments);
+			methods.init.apply(this, arguments);
 			return this;
 		}
 		else {
