@@ -10,10 +10,9 @@
  */
 ;(function($) {
 
-	// @todo: aria data atributy, viz http://heydonworks.com/practical_aria_examples/
-	// @todo: dodělat vlastní eventy, init.collapsable, collapseAll/expandAll.collapsable, destroy.collapsable - může se hodit obnovení this.$boxSet, protože to chceme volat nad ním
-	// @todo: u expandAll.collapsable vymyslet preventDefault - měl by zabránit otevření všech boxů? analogicky i pro ostatní
-	// @todo: zamyslet se nad tím, co způsobí nahrazení callbacků za eventy v případě ajaxu, kdy se collapsable nahradí
+	// @todo: dodělat vlastní eventy, destroy.collapsable
+	// @todo: vyzkoušet? e.originalEvent.stopPropagation() v expand.collapsable callbacku by mohlo zabránit spouštění AJAXového požadavku v případě, že na .ca-control byla class ajax?
+	// @todo: add aria data attributes, see http://heydonworks.com/practical_aria_examples/
 
 	// @feature: díky předávání originalEvent do expand.collapsable (atd.) je možné použít e.originalEvent.preventDefault() místo defaults.preventDefault! cool, ne?!
 
@@ -58,14 +57,14 @@
 		init: function(options) {
 			return new Collapsable(this, options);
 		},
-		expandAll: function(event) {
-			handlePublicMethods.call(this, 'expandAll', event);
+		expandAll: function(data) {
+			handlePublicMethods.call(this, 'expandAll', data);
 		},
-		collapseAll: function(event) {
-			handlePublicMethods.call(this, 'collapseAll', event);
+		collapseAll: function(data) {
+			handlePublicMethods.call(this, 'collapseAll', data);
 		},
-		destroy: function(event) {
-			handlePublicMethods.call(this, 'destroy', event); // @todo destroy :)
+		destroy: function(data) {
+			handlePublicMethods.call(this, 'destroy', data); // @todo destroy :)
 		}
 	};
 
@@ -91,10 +90,10 @@
 	/**
 	 * Handles public method called on jQuery object using adapter
 	 * @param {String} action - CollapseAll|expandAll|destroy @todo destroy
-	 * @param {Object} event  - Event (object) passed by user
+	 * @param {Object} data - Data passed by user
 	 * @private
 	 */
-	function handlePublicMethods(action, event) {
+	function handlePublicMethods(action, data) {
 		var processed = [];
 		this.each(function() {
 			var instance = $(this).data('collapsable');
@@ -104,7 +103,7 @@
 				if (processed.indexOf(uid) === -1) {
 					processed.push(uid);
 
-					instance.parent[action](event);
+					instance.parent[action](data);
 				}
 			}
 		});
@@ -202,7 +201,7 @@
 	 * @private
 	 */
 	function handleDefaultExpanded() {
-		var event;
+		var event = $.Event('init.collapsable');
 		var opts = this.opts;
 		var items = this.items;
 
@@ -214,14 +213,13 @@
 			opts.fx = 'toggle';
 
 		var l = items.length;
-		var force = ! opts.collapsableAll; // if we can't collapse all, we force expanding the first one chosen in prepareDefaultExpanded, @todo potentially force-open the one from URL instead of first, if hash set? or maybe try to open some without forcing and only if failed, do force-open (would require two passes?
+		var force = ! opts.collapsableAll; // if we can't collapse all, we force expanding the first one chosen in prepareDefaultExpanded, @todo potentially force-open the one from URL instead of first, if hash set? or maybe try to open some without forcing and only if failed, do force-open? (would require two passes)
 		for (var i = 0; i < l; i++) {
-			event = $.Event('init.collapsable', items[i].$collapsable); // @todo: dává toto smysl? neměla by event být společná? ukládá se opravdu do originalEvent?
 			if (items[i].defaultExpanded) {
-				items[i].expand(event, force);
+				items[i].expand(event, null, force);
 				force = false;
 			} else {
-				items[i].collapse(event, true); // on init, we want to close all regardless - if you return false, than we shouln't have the class set in first place
+				items[i].collapse(event, null, true); // on init, we want to force-close all - if you return false, than you should have the class set in first place (so it would go into if statement above)
 			}
 		}
 
@@ -313,21 +311,21 @@
 
 	/**
 	 * Expands all collapsed items
-	 * @param {Event} event - Event to be passed to onExpand and onExpanded callbacks
+	 * @param {Object} data - Data to be passed to triggered event
 	 */
-	Collapsable.prototype.expandAll = function(event) {
+	Collapsable.prototype.expandAll = function(data) {
 		// if grouped, we only want to expand one (first) box, or none if already expanded
 		if (this.opts.grouped && this.getExpanded().length) {
 			return;
 		}
 
-		event = event || { type: 'collapsable.expandAll' };
+		var event = $.Event('expandAll.collapsable');
 
 		var l = this.items.length;
 
 		for (var i = 0; i < l; i++) {
 			if (! this.items[i].isExpanded()) {
-				var expanded = this.items[i].expand(event);
+				var expanded = this.items[i].expand(event, data);
 
 				if (this.opts.grouped && expanded) {
 					break;
@@ -339,16 +337,16 @@
 
 	/**
 	 * Collapses all expanded items
-	 * @param {Event} event - Event to be passed to onCollapse and onCollapsed callbacks
+	 * @param {Object} data - Data to be passed to triggered event
 	 */
-	Collapsable.prototype.collapseAll = function(event) {
-		event = event || { type: 'collapsable.collapseAll' };
+	Collapsable.prototype.collapseAll = function(data) {
+		var event = $.Event('collapseAll.collapsable');
 
 		var expandedItems = this.getExpanded();
 		var l = expandedItems.length;
 
 		for (var i = 0; i < l; i++) {
-			this.items[expandedItems[i]].collapse(event);
+			this.items[expandedItems[i]].collapse(event, data);
 		}
 	};
 
@@ -387,7 +385,7 @@
 
 		selector = (this.$control[0].tagName.toUpperCase() === 'A') ? opts.control : opts.control + ' a';
 
-		// data contains arguments passed when trigger is called, used for passing event that triggered opening (eg. extLink click)
+		// originalEvent contains arguments passed when trigger is called, used for passing event that triggered opening (eg. extLink click)
 		this.$collapsable.on(opts.event, selector, function(event, originalEvent) {
 			var passEvent = originalEvent ? originalEvent : event;
 			if (opts.preventDefault) {
@@ -459,32 +457,32 @@
 
 	/**
 	 * Expands single CollapsableItem; could be prevented by returning false from onExpand callback
-	 * @param {Object} originalEvent  - Event passed to function
+	 * @param {Object} originalEvent  - Event passed to triggered event
+	 * @param {Object} data - Data passed to triggered event
 	 * @param {Boolean} force - Forcing CollapsableItem to expand regardless on onExpand return value, should be used only on initilization (force open default expanded item when collapsableAll === false)
 	 * @returns {Boolean}     - Returns if CollapsableItem has been expanded or not
 	 */
-	CollapsableItem.prototype.expand = function(originalEvent, force) {
+	CollapsableItem.prototype.expand = function(originalEvent, data, force) {
 		var opts = this.parent.opts;
 		var expandedItem = this.parent.getExpanded(); // grouped -> max one expanded item
 
 		this.parent.promiseOpen = true; // allows us to collapse expanded item even if there might be collapseAll === false option
 		if (opts.grouped) {
-			// before expanding, we have to collapse previously opened item
-			// if grouped element hasn't collapsed, we can't continue
-			if (expandedItem.length && this.parent.items[expandedItem[0]].collapse(originalEvent, force) === false) {
+			// before expanding, we have to collapse previously opened item, if grouped element hasn't collapsed, we can't continue
+			if (expandedItem.length && this.parent.items[expandedItem[0]].collapse(originalEvent, data, force) === false) {
 				this.parent.promiseOpen = false;
 				return false;
 			}
 		}
 		this.parent.promiseOpen = false;
 
-		var event = $.Event('expand.collapsable', { originalEvent: originalEvent });
+		var event = $.Event('expand.collapsable', { customData: data, originalEvent: originalEvent });
 		this.$collapsable.trigger(event);
 
 		if (event.isDefaultPrevented() && ! force) {
 			// collapsableAll === false && grouped === true -> if the box has not opened, we must make sure something is opened, therefore we force-open previously opened box (opts.grouped is true means we tried to collapse something), simulating it has never closed in first place
 			if (! opts.collapsableAll && opts.grouped) {
-				this.parent.items[expandedItem[0]].expand(originalEvent, true);
+				this.parent.items[expandedItem[0]].expand(originalEvent, data, true);
 			}
 
 			return false;
@@ -495,18 +493,19 @@
 
 	/**
 	 * Collapses single CollapsableItem; could be prevented by returning false from onCollapse callback
-	 * @param {Object} originalEvent  - Event passed to function
+	 * @param {Object} originalEvent  - Event passed to triggered event
+	 * @param {Object} data - Data passed to triggered event
 	 * @param {Boolean} force - Forcing CollapsableItem to collapse regardless on onCollapse return value
 	 * @returns {Boolean}     - Returns if CollapsableItem has been collapsed or not
 	 */
-	CollapsableItem.prototype.collapse = function(originalEvent, force) {
+	CollapsableItem.prototype.collapse = function(originalEvent, data, force) {
 		var opts = this.parent.opts;
 		// if we can't collapse all, we are not promised to open something and there is only one opened box, then we can't continue
 		if (! opts.collapsableAll && ! this.parent.promiseOpen && this.parent.getExpanded().length < 2) {
 			return false;
 		}
 
-		var event = $.Event('collapse.collapsable', { originalEvent: originalEvent });
+		var event = $.Event('collapse.collapsable', { customData: data, originalEvent: originalEvent });
 		this.$collapsable.trigger(event);
 
 		if (event.isDefaultPrevented() && !force) {
@@ -544,15 +543,6 @@
 		}
 		else if (typeof options === 'object' || !options) {
 			var data =  methods.init.apply(this, arguments);
-
-			// @todo: místo tohoto bude init.collapsable nad všemi položkami dohromady?
-			if (data && typeof data.opts.onInit === 'function') {
-				var l = data.items.length;
-				for (var i = 0; i < l; i++) {
-					data.opts.onInit.call(data.items[i].$collapsable);
-				}
-			}
-
 			return this;
 		}
 		else {
