@@ -10,10 +10,6 @@
  */
 ;(function($) {
 
-	// @todo: dodělat vlastní eventy, destroy.collapsable
-	// @todo: vyzkoušet? e.originalEvent.stopPropagation() v expand.collapsable callbacku by mohlo zabránit spouštění AJAXového požadavku v případě, že na .ca-control byla class ajax?
-	// @todo: add aria data attributes, see http://heydonworks.com/practical_aria_examples/
-
 	// @feature: díky předávání originalEvent do expand.collapsable (atd.) je možné použít e.originalEvent.preventDefault() místo defaults.preventDefault! cool, ne?!
 
 	/**
@@ -26,26 +22,25 @@
 		event: 'click',         // event triggering the expand/collapse
 
 		fx: false,              // effect for expanding/collapsing, [ false | toggle | slide | fade | {Object} ]
-		fxDuration: 0,          // duration of the effect, affects delay between onExpand (onCollapse) and onExpanded (onCollapsed) callbacks; default value is 500 when fx set to slide
+		fxDuration: 0,          // duration of the effect, affects delay between `expand.collapsable`(`collapse.collapsable`) and `expanded.collapsable` (`collapsed.collapsable`) evetns are triggered; default value is 500 when fx set to slide
 
 		grouped: false,         // determines, if there could be more than one expanded box in same time; related to jQuery set on which initialized
 		collapsableAll: true,   // possibility of collapsing all boxes from set
-		preventDefault: true,   // whether prevenDefault should be called when specified event occurs on control; even if false, you may use e.originalEvent.preventDefault() inside collapsable event handlers
+		preventDefault: true,   // whether prevenDefault should be called when specified event occurs on control; even if false, e.originalEvent.preventDefault() may be used inside collapsable event handlers
 
 		extLinks: {             // external links for operating collapsable set, can be anywhere else in DOM
 			selector: null,     // CSS selector for external links; it has to be anchors; the click event is binded
-			//openOnly: true    // @todo create possibility for extLinks would only open the boxes? for now, you might achieve this using callbacks and returning false
 			preventDefault: false, // whether preventDefault is called on extLinks click
 			activeClass: 'ca-ext-active' // class which would be toggled on external link when associated box is expanded or collapsed
 		},
 
 		classNames: {            // CSS class names to be used on collapsable box; they are added to element, on which collapsable has been called
-			expanded:        'ca-expanded',
-			collapsed:       'ca-collapsed',
+			expanded: 'ca-expanded',
+			collapsed: 'ca-collapsed',
 			defaultExpanded: 'ca-default-expanded'
 		}
 
-		// callbacks are no more available, use events instead
+		// callbacks are no more available, use event handlers instead
 	};
 
 
@@ -54,17 +49,17 @@
 	 * @type {{init: methods.init, expandAll: methods.expandAll, collapseAll: methods.collapseAll, destroy: methods.destroy}}
 	 */
 	var methods = {
-		init: function(options) {
+		init: function (options) {
 			return new Collapsable(this, options);
 		},
-		expandAll: function(data) {
+		expandAll: function (data) {
 			handlePublicMethods.call(this, 'expandAll', data);
 		},
-		collapseAll: function(data) {
+		collapseAll: function (data) {
 			handlePublicMethods.call(this, 'collapseAll', data);
 		},
-		destroy: function(data) {
-			handlePublicMethods.call(this, 'destroy', data); // @todo destroy :)
+		destroy: function (data) {
+			handlePublicMethods.call(this, 'destroy', data);
 		}
 	};
 
@@ -89,13 +84,13 @@
 
 	/**
 	 * Handles public method called on jQuery object using adapter
-	 * @param {String} action - CollapseAll|expandAll|destroy @todo destroy
+	 * @param {String} action - collapseAll|expandAll|destroy
 	 * @param {Object} data - Data passed by user
 	 * @private
 	 */
 	function handlePublicMethods(action, data) {
 		var processed = [];
-		this.each(function() {
+		this.each(function () {
 			var instance = $(this).data('collapsable');
 			if (instance) {
 				var uid = instance.parent.uid;
@@ -113,20 +108,22 @@
 	/**
 	 * Finds ext links specified in options and bind click event to them for opening
 	 * @this Collapsable
+	 * @todo create possibility for extLinks would only open the boxes? for now, it might be achieved using event handlers and e.preventDefault
 	 * @private
 	 */
 	function handleExtLinks() {
-		if ((this.$extLinks = $(this.opts.extLinks.selector).filter('a')).length) {
+		var opts = this.opts;
+		if ((this.$extLinks = $(opts.extLinks.selector).filter('a')).length) {
 			var that = this;
 
-			this.$extLinks.on('click', function(event) {
-				if (that.opts.extLinks.preventDefault)
+			this.$extLinks.on('click.collapsable', function (event) {
+				if (opts.extLinks.preventDefault)
 					event.preventDefault();
 
 				var collapsable = $($(this).attr('href')).data('collapsable');
 
 				if (collapsable) {
-					collapsable.$control.find('a').trigger('click', event);
+					collapsable.$controlLink.first().trigger(opts.event + '.collapsable', event);
 				}
 			});
 		}
@@ -148,7 +145,9 @@
 
 		var defaultExpanded = -1;
 		var defaultExpandedFromUrl = -1;
-		var $items = $($.map(this.items, function(item){return item.$collapsable.get();}));
+		var $items = $($.map(this.items, function (item) {
+			return item.$collapsable.get();
+		}));
 
 		// search for #hash in url
 		if (i !== -1) {
@@ -179,16 +178,16 @@
 		// not grouped, we add flag to all items with class
 		else {
 			var that = this;
-			$items.each(function(i) {
+			$items.each(function (i) {
 				if ($(this).hasClass(that.opts.classNames.defaultExpanded)) {
-					defaultExpanded = i; // for later use is sufficient to have last index only
+					defaultExpanded = i; // for later use it is sufficient to have last index only
 					that.items[i].defaultExpanded = true;
 				}
 			});
 		}
 
 		// if we need one and none was found yet, we take the first
-		if (defaultExpandedFromUrl === -1 && defaultExpanded === -1 && ! this.opts.collapsableAll) {
+		if (defaultExpandedFromUrl === -1 && defaultExpanded === -1 && !this.opts.collapsableAll) {
 			this.items[0].defaultExpanded = true;
 		}
 	}
@@ -197,6 +196,7 @@
 	/**
 	 * Expand or collapse item based on flags set in prepareDefaultExpanded method; called on initialization within the
 	 * context of Collapsable
+	 * @todo When !opts.collapseAll && opts.grouped, we now force-open the first item with defaultExpanded flag, regardless how it got it (hash in url or class); potentially force-open the one from URL instead of first, if hash set? or maybe try to open some without forcing and only if failed, do force-open (would require two passes)?
 	 * @this Collapsable
 	 * @private
 	 */
@@ -213,13 +213,13 @@
 			opts.fx = 'toggle';
 
 		var l = items.length;
-		var force = ! opts.collapsableAll; // if we can't collapse all, we force expanding the first one chosen in prepareDefaultExpanded, @todo potentially force-open the one from URL instead of first, if hash set? or maybe try to open some without forcing and only if failed, do force-open? (would require two passes)
+		var force = !opts.collapsableAll; // if we can't collapse all, we force expanding the first one chosen in prepareDefaultExpanded
 		for (var i = 0; i < l; i++) {
 			if (items[i].defaultExpanded) {
 				items[i].expand(event, null, force);
 				force = false;
 			} else {
-				items[i].collapse(event, null, true); // on init, we want to force-close all - if you return false, than you should have the class set in first place (so it would go into if statement above)
+				items[i].collapse(event, null, true); // on init, we want to force-close all - if false returned, than the class might have been set in first place (so it would go into if statement above)
 			}
 		}
 
@@ -264,7 +264,7 @@
 	 * @returns {Collapsable}
 	 * @constructor
 	 */
-	var Collapsable = function($boxSet, options) {
+	var Collapsable = function ($boxSet, options) {
 		this.opts = $.extend(true, {}, $.fn.collapsable.defaults, options);
 		this.items = [];
 
@@ -277,7 +277,7 @@
 
 		prepareFxOpt.call(this);
 
-		$boxSet.each(function() {
+		$boxSet.each(function () {
 			var collapsable = new CollapsableItem(that, this);
 
 			if (collapsable.$box.length && collapsable.$control.length) {
@@ -295,7 +295,7 @@
 	 * Returns indexes of expanded items in Collapsable.items
 	 * @returns {Array}
 	 */
-	Collapsable.prototype.getExpanded = function() {
+	Collapsable.prototype.getExpanded = function () {
 		var expanded = [];
 		var l = this.items.length;
 
@@ -313,7 +313,7 @@
 	 * Expands all collapsed items
 	 * @param {Object} data - Data to be passed to triggered event
 	 */
-	Collapsable.prototype.expandAll = function(data) {
+	Collapsable.prototype.expandAll = function (data) {
 		// if grouped, we only want to expand one (first) box, or none if already expanded
 		if (this.opts.grouped && this.getExpanded().length) {
 			return;
@@ -324,7 +324,7 @@
 		var l = this.items.length;
 
 		for (var i = 0; i < l; i++) {
-			if (! this.items[i].isExpanded()) {
+			if (!this.items[i].isExpanded()) {
 				var expanded = this.items[i].expand(event, data);
 
 				if (this.opts.grouped && expanded) {
@@ -339,7 +339,7 @@
 	 * Collapses all expanded items
 	 * @param {Object} data - Data to be passed to triggered event
 	 */
-	Collapsable.prototype.collapseAll = function(data) {
+	Collapsable.prototype.collapseAll = function (data) {
 		var event = $.Event('collapseAll.collapsable');
 
 		var expandedItems = this.getExpanded();
@@ -349,6 +349,90 @@
 			this.items[expandedItems[i]].collapse(event, data);
 		}
 	};
+
+
+	/**
+	 * Destroy collapsable and reverts DOM changes to state prior initialization
+	 */
+	Collapsable.prototype.destroy = function () {
+		var opts = this.opts;
+
+		var l = this.items.length;
+		for (var i = 0; i < l; i++) {
+			var item = this.items[i];
+
+			// remove classes and event handlers from main element
+			item.$collapsable
+				.removeClass(opts.classNames.collapsed + ' ' + opts.classNames.expanded)
+				.removeData('collapsable')
+				.off(opts.event + '.collapsable');
+
+			// revert control element
+			item.$control.removeClass('ca-link');
+			item.$control.find('.ca-link').removeClass('ca-link');
+			item.$control.find('[data-ca-created]').each(function () {
+				$(this).parent().html($(this).html());
+			});
+
+			// revert box element
+			var style = item.$box.data('ca-pre-init-style') || '';
+			item.$box
+				.attr('style', style)
+				.removeData('ca-pre-init-style');
+
+			item.$collapsable.trigger('destroy.collapsable');
+		}
+
+		// remove
+		this.$extLinks.off('click.collapsable');
+	};
+
+
+	/**
+	 * Prepares DOM structure for collapsable element. Each ca-control element is tested for being anchor. If there's
+	 * match, the element (anchor) is added class `ca-link`. If no match, we try to find anchor inside and add class
+	 * to each of them as well. If ca-control is not an anchor and contains no anchor, we wrap inside to anchor with
+	 * appropriate class and custom data attribute for potential destroy handle. It also stores default style attribute
+	 * of box element for later use in destroy handle.
+	 * @summary Prepares DOM structure for collapsable element
+	 * @this CollapsableItem
+	 * @private
+	 */
+	function prepareCollapsableDOM() {
+		var collapsableItem = this;
+
+		if (! collapsableItem.id) {
+			collapsableItem.id = getUid();
+			collapsableItem.$collapsable.attr('id', this.id);
+		}
+
+		var boxId = collapsableItem.$box.attr('id') || collapsableItem.id + '-ca-box';
+		collapsableItem.$box
+			.attr('id', boxId)
+			.data('ca-pre-init-style', collapsableItem.$box.attr('style'));
+
+		collapsableItem.$control.each(function() {
+			var $el = $(this);
+			var $a;
+
+			// a.ca-control -> add class .ca-link
+			if ($el.is('a')) {
+				$a = $el;
+			}
+			// .ca-control a -> add class .ca-link
+			else if (($a = $el.find('a')).length) {
+			}
+			// no anchor found, create custom
+			else {
+				$el.wrapInner('<a data-ca-created href="#' + collapsableItem.id + '"></a>');
+				$a = $el.find('a');
+			}
+
+			$a.addClass('ca-link');
+			$a.attr('aria-controls', boxId);
+		});
+
+	}
 
 
 	/**
@@ -372,21 +456,12 @@
 		var selector; // selector for clickable element
 		var opts = this.parent.opts; // shortcut
 
-		if (! this.id) {
-			this.id = getUid();
-			this.$collapsable.attr('id', this.id);
-		}
+		prepareCollapsableDOM.call(this);
 
-		// @todo umožnit různou strukturu ca-control, nyní musí být vždy stejná, tj. nelze <p class="ca-control"><a>...</a> a <p class="ca-control">...</p> v jednom boxu - nevytvoří se odkaz ve druhém elementu
-		// souvisí s tím i hodnota proměnné selector níže
-		if (this.$control.find('a').length === 0 && this.$control[0].tagName.toUpperCase() != 'A') {
-			this.$control.wrapInner('<a class="ca-link" href="#' + this.id + '"></a>');
-		}
-
-		selector = (this.$control[0].tagName.toUpperCase() === 'A') ? opts.control : opts.control + ' a';
+		this.$controlLink = this.$control.find('.ca-link');
 
 		// originalEvent contains arguments passed when trigger is called, used for passing event that triggered opening (eg. extLink click)
-		this.$collapsable.on(opts.event, selector, function(event, originalEvent) {
+		this.$controlLink.on(opts.event + '.collapsable', function(event, originalEvent) {
 			var passEvent = originalEvent ? originalEvent : event;
 			if (opts.preventDefault) {
 				event.preventDefault();
@@ -407,9 +482,9 @@
 
 
 	/**
-	 *
+	 * Handling common parts of expanding and collapsing
 	 * @param {String} action - Either `expand` or `collapse`
-	 * @param {Event} event - Event to be passed to callbacks
+	 * @param {Event} event - Event to be passed to event handlers
 	 * @returns {boolean}
 	 */
 	function handleExpandCollapse(action, event) {
@@ -436,6 +511,10 @@
 			.removeClass(removeClass)
 			.addClass(addClass);
 
+		// aria support
+		this.$controlLink.attr('aria-expanded', action === 'expand');
+		this.$box.attr('aria-hidden', action !== 'expand');
+
 		// actually toggle the box state
 		if(typeof opts.fx === 'object') {
 			this.$box[opts.fx[action]](opts.fxDuration, function () {
@@ -456,7 +535,7 @@
 	}
 
 	/**
-	 * Expands single CollapsableItem; could be prevented by returning false from onExpand callback
+	 * Expands single CollapsableItem; could be prevented by `preventDefault` called on `expand.collapsable` event
 	 * @param {Object} originalEvent  - Event passed to triggered event
 	 * @param {Object} data - Data passed to triggered event
 	 * @param {Boolean} force - Forcing CollapsableItem to expand regardless on onExpand return value, should be used only on initilization (force open default expanded item when collapsableAll === false)
@@ -492,7 +571,7 @@
 	};
 
 	/**
-	 * Collapses single CollapsableItem; could be prevented by returning false from onCollapse callback
+	 * Collapses single CollapsableItem; could be prevented by `preventDefault` called on `collapse.collapsable` event
 	 * @param {Object} originalEvent  - Event passed to triggered event
 	 * @param {Object} data - Data passed to triggered event
 	 * @param {Boolean} force - Forcing CollapsableItem to collapse regardless on onCollapse return value
