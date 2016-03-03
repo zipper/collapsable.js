@@ -1,12 +1,5 @@
 /**
- * jQuery plugin for collapsable boxes
- *
- * @author Radek Šerý <radek.sery@peckadesign.cz>
- * @copyright Copyright (c) 2014-2016 Radek Šerý
- * @license MIT
- *
- * @version 2.0.0
- *
+ * jquery.collapsable
  */
 ;(function($) {
 
