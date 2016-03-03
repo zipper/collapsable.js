@@ -1,14 +1,25 @@
 {
 	"name": "jquery.collapsable",
-	"version": "1.1.0",
-	"homepage": "https://github.com/peckadesign/jquery.collapsable",
-	"authors": [
-		"PeckaDesign, s.r.o <support@peckadesign.cz>",
-		"Radek Šerý <radek.sery@peckadesign.cz>"
-	],
+	"description": "jQuery plugin for collapsable boxes",
+	"version": "2.0.0",
 	"main": "jquery.collapsable.js",
+	"authors": [ "Radek Šerý <radek.sery@peckadesign.cz>" ],
+	"homepage": "http://peckadesign.github.io/jquery.collapsable/",
 	"license": "MIT",
+	"keywords": ["jquery", "jquery-plugin", "collapsable", "jquery-collapsable"],
 	"dependencies": {
 		"jquery": ">=1.7"
-	}
+	},
+	"ignore": [
+		"**/.*",
+		"node_modules",
+		"bower_components",
+		"demo",
+		"libs",
+		"src",
+		"test",
+		"*.md",
+		"Gruntfile.js",
+		"*.json"
+	]
 }
