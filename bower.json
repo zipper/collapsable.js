@@ -3,8 +3,8 @@
 	"description": "jQuery plugin for collapsable boxes",
 	"version": "2.0.0",
 	"main": "jquery.collapsable.js",
-	"authors": [ "Radek Šerý <radek.sery@peckadesign.cz>" ],
-	"homepage": "http://peckadesign.github.io/jquery.collapsable/",
+	"authors": [ "Radek Šerý <radek.sery@gmail.com>" ],
+	"homepage": "http://zipper.github.io/jquery.collapsable/",
 	"license": "MIT",
 	"keywords": ["jquery", "jquery-plugin", "collapsable", "jquery-collapsable"],
 	"dependencies": {

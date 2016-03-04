@@ -5,16 +5,16 @@
 	"version": "2.0.0",
 	"author": {
 		"name": "Radek Šerý",
-		"email": "radek.sery@peckadesign.cz"
+		"email": "radek.sery@gmail.com"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/peckadesign/jquery.collapsable"
+		"url": "https://github.com/zipper/jquery.collapsable"
 	},
 	"keywords": ["jquery", "jquery-plugin", "collapsable", "jquery-collapsable"],
-	"bugs": "https://github.com/peckadesign/jquery.collapsable/issues",
+	"bugs": "https://github.com/zipper/jquery.collapsable/issues",
 	"license": "MIT",
-	"homepage": "http://peckadesign.github.io/jquery.collapsable/",
+	"homepage": "http://zipper.github.io/jquery.collapsable/",
 	"dependencies": {},
 	"devDependencies": {
 		"grunt": "~0.4.5",

@@ -1,8 +1,8 @@
 /**
  * jQuery Collapsable - jQuery plugin for collapsable boxes 
- * http://peckadesign.github.io/jquery.collapsable/
+ * http://zipper.github.io/jquery.collapsable/
  *
- * @author Radek Šerý <radek.sery@peckadesign.cz>
+ * @author Radek Šerý <radek.sery@gmail.com>
  * @copyright Copyright (c) 2014-2016 Radek Šerý
  * @license MIT
  *

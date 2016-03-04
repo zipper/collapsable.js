@@ -9,7 +9,7 @@ $ cat bower.json
 	"name": "Project",
 	"private": true,
 	"dependencies": {
-		"jquery.collapsable": "peckadesign/jquery.collapsable#2.0.*"
+		"jquery.collapsable": "zipper/jquery.collapsable#2.0.*"
 	}
 }
 ```
