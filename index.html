@@ -23,7 +23,59 @@
 <a id="jquery-collapsable" class="anchor" href="#jquery-collapsable" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>jQuery Collapsable</h1>
 
 <h2>
-<a id="instalation" class="anchor" href="#instalation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Instalation</h2>
+<a id="options" class="anchor" href="#options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Options</h2>
+
+<table>
+<thead>
+<tr>
+<th align="left">Option</th>
+<th align="left">Default Value</th>
+<th align="left">Datatype</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">control</td>
+<td align="left"><code>.ca-control</code></td>
+<td align="left">String</td>
+<td align="left">CSS selector for control element.</td>
+</tr>
+<tr>
+<td align="left">box</td>
+<td align="left"><code>.ca-box</code></td>
+<td align="left">String</td>
+<td align="left">CSS selector for box element.</td>
+</tr>
+<tr>
+<td align="left">event</td>
+<td align="left"><code>click</code></td>
+<td align="left">String</td>
+<td align="left">Event binded to control element. On this event, the box will be expanded / collapsed</td>
+</tr>
+<tr>
+<td align="left">fx</td>
+<td align="left"><code>null</code></td>
+<td align="left">Object</td>
+<td align="left">Effect used for expanding / collapsing. When <code>null</code> is passed, only class name is changed. Alternatively, object containing properties <code>expand</code> and <code>collapse</code> may be passed. In this case, values will be used as functions for expanding and collapsing. Example:</td>
+</tr>
+<tr>
+<td align="left">fx</td>
+<td align="left"><code>null</code></td>
+<td align="left">String</td>
+<td align="left">There are three predefined string values that can be used -- <code>toggle</code>, <code>slide</code> and <code>fade</code>
+</td>
+</tr>
+</tbody>
+</table>
+
+<div class="highlight highlight-source-js"><pre>{
+  expand<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>slideDown<span class="pl-pds">'</span></span>,
+  collapse<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>slideUp<span class="pl-pds">'</span></span>
+}</pre></div>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
 
 <p><code>bower install jquery.collapsable</code></p>
 
