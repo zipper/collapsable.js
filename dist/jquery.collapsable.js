@@ -460,7 +460,7 @@
 
 		prepareCollapsableDOM.call(this);
 
-		this.$controlLink = this.$control.find('.ca-link');
+		this.$controlLink = this.$control.find('.ca-link').addBack('.ca-link');
 
 		// originalEvent contains arguments passed when trigger is called, used for passing event that triggered opening (eg. extLink click)
 		this.$controlLink.on(opts.event + '.collapsable', function(event, originalEvent) {
