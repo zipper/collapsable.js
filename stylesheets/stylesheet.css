@@ -238,7 +238,7 @@ a:hover {
 	font-weight:normal;
 	color:#159957;
 }
-.main-content h2 + h3 {
+.main-content h1 + h2 {
 	margin-top:1rem;
 }
 
@@ -249,7 +249,7 @@ a:hover {
 	font-size:1.5rem;
 }
 .main-content h3 {
-	font-size:1.2rem;
+	font-size:1.125rem;
 }
 .main-content h4 {
 	font-size:1rem;
@@ -258,20 +258,6 @@ a:hover {
 	font-size:.9rem;
 }
 
-@media screen and (min-width: 48em) {
-	.main-content h1 {
-		font-size:3rem;
-	}
-	.main-content h2 {
-		font-size:2.25rem;
-	}
-	.main-content h3 {
-		font-size:1.625rem;
-	}
-	.main-content h4 {
-		font-size:1rem;
-	}
-}
 
 
 .main-content p {
