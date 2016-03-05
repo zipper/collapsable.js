@@ -503,7 +503,7 @@
 
 		// update extLinks
 		this.parent.$extLinks
-			.filter('[href=#' + this.id + ']')
+			.filter('[href="#' + this.id + '"]')
 			[action === 'expand' ? 'addClass' : 'removeClass'](opts.classNames.extLinkActive);
 
 		// aria support
