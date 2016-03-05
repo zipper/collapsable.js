@@ -1,0 +1,21 @@
+.js {
+	.ca-expanded, .ca-default-expanded {
+		.ca-box { display:block; }
+		.ca-control-collapse { display:inline; }
+		.ca-control-expand   { display:none; }
+	}
+	&, .ca-collapsed {
+		.ca-box { display:none; }
+		.ca-control-collapse { display:none; }
+		.ca-control-expand   { display:inline; }
+	}
+
+	.ca-ico:before { margin:0 .5em 0 0; content:"▼"; font-size:12px; vertical-align:middle; }
+	.ca-expanded {
+		.ca-ico:before { content:"▲"; }
+	}
+}
+
+.no-js {
+	.collapsable .ca-control { display:none; }
+}

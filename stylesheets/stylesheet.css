@@ -8,7 +8,7 @@ body {
 	font-family:"Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size:16px;
 	line-height:1.5;
-	color:#606c71;
+	color:#49555A;
 }
 
 a {
@@ -18,6 +18,17 @@ a {
 
 a:hover {
 	text-decoration:underline;
+}
+
+.octicon {
+	vertical-align:middle;
+}
+
+.break {
+	display: block;
+	visibility: hidden;
+	clear: both;
+	height: 0;
 }
 
 .btn {
@@ -46,14 +57,14 @@ a:hover {
 @media screen and (min-width:64em) {
 	.btn {
 		padding:0.75rem 1rem;
-}
+	}
 }
 
 @media screen and (min-width:42em) and (max-width:64em) {
 	.btn {
 		padding:0.6rem 0.9rem;
 		font-size:0.9rem;
-}
+		}
 }
 
 @media screen and (max-width:42em) {
@@ -62,12 +73,57 @@ a:hover {
 		width:100%;
 		padding:0.75rem;
 		font-size:0.9rem;
-}
+	}
 
 	.btn + .btn {
 		margin-top:1rem;
 		margin-left:0;
+		}
 }
+
+
+.main-content h1 .anchor, .main-content h2 .anchor, .main-content h3 .anchor,
+.main-content h4 .anchor, .main-content h5 .anchor, .main-content h6 .anchor {
+	position:absolute;
+	top:0;
+	left: -20px;
+	opacity:0;
+	transition:opacity 0.2s ease 0.2s;
+	line-height:inherit;
+}
+.main-content h1:hover .anchor, .main-content h2:hover .anchor, .main-content h3:hover .anchor,
+.main-content h4:hover .anchor, .main-content h5:hover .anchor, .main-content h6:hover .anchor {
+	opacity:1;
+}
+
+
+@media screen and (min-width:48em) {
+	.col-preview, .col-source {
+		float:left;
+		width:48%;
+	}
+
+	.col-preview .collapsable {
+		opacity:.5;
+		transition:opacity 0.2s ease 0.1s;
+	}
+	.col-preview:hover .collapsable {
+		opacity:1;
+	}
+
+	.col-source {
+		float:right;
+	}
+}
+
+@media screen and (min-width:64em) {
+	.col-preview {
+		width:35%;
+	}
+
+	.col-source {
+		width:60%
+	}
 }
 
 .page-header {
@@ -80,19 +136,19 @@ a:hover {
 @media screen and (min-width:64em) {
 	.page-header {
 		padding:5rem 6rem;
-}
+	}
 }
 
 @media screen and (min-width:42em) and (max-width:64em) {
 	.page-header {
 		padding:3rem 4rem;
-}
+	}
 }
 
 @media screen and (max-width:42em) {
 	.page-header {
 		padding:2rem 1rem;
-}
+	}
 }
 
 .project-name {
@@ -103,19 +159,19 @@ a:hover {
 @media screen and (min-width:64em) {
 	.project-name {
 		font-size:3.25rem;
-}
+	}
 }
 
 @media screen and (min-width:42em) and (max-width:64em) {
 	.project-name {
 		font-size:2.25rem;
-}
+	}
 }
 
 @media screen and (max-width:42em) {
 	.project-name {
 		font-size:1.75rem;
-}
+	}
 }
 
 .project-tagline {
@@ -127,19 +183,44 @@ a:hover {
 @media screen and (min-width:64em) {
 	.project-tagline {
 		font-size:1.25rem;
-}
+	}
 }
 
 @media screen and (min-width:42em) and (max-width:64em) {
 	.project-tagline {
 		font-size:1.15rem;
-}
+	}
 }
 
 @media screen and (max-width:42em) {
 	.project-tagline {
 		font-size:1rem;
+	}
 }
+
+.main-content .collapsable {
+	margin-bottom:1rem;
+	border:solid #e9ebec;
+	border-width:1px 0;
+}
+
+.main-content .ca-control {
+	margin:0;
+	background:#f9fcff;
+	font-size:1rem;
+}
+
+.main-content .ca-link, .main-content .ca-box {
+	display:block;
+	padding:.8rem;
+}
+
+.main-content .ca-expanded .ca-link {
+	border-bottom:1px solid #f3f5f6;
+}
+
+.main-content .ca-box :last-child {
+	margin-bottom:0;
 }
 
 .main-content :first-child {
@@ -151,11 +232,47 @@ a:hover {
 }
 
 .main-content h1, .main-content h2, .main-content h3, .main-content h4, .main-content h5, .main-content h6 {
+	position:relative;
 	margin-top:2rem;
 	margin-bottom:1rem;
 	font-weight:normal;
 	color:#159957;
 }
+.main-content h2 + h3 {
+	margin-top:1rem;
+}
+
+.main-content h1 {
+	font-size:2rem;
+}
+.main-content h2 {
+	font-size:1.5rem;
+}
+.main-content h3 {
+	font-size:1.2rem;
+}
+.main-content h4 {
+	font-size:1rem;
+}
+.main-content h5, .main-content h6 {
+	font-size:.9rem;
+}
+
+@media screen and (min-width: 48em) {
+	.main-content h1 {
+		font-size:3rem;
+	}
+	.main-content h2 {
+		font-size:2.25rem;
+	}
+	.main-content h3 {
+		font-size:1.625rem;
+	}
+	.main-content h4 {
+		font-size:1rem;
+	}
+}
+
 
 .main-content p {
 	margin-bottom:1em;
@@ -270,6 +387,10 @@ a:hover {
 	vertical-align:middle;
 }
 
+.main-content table .indent td:first-child {
+	padding-left:2.5rem;
+}
+
 .main-content table tbody tr:nth-child(even) { background:#f9fcff; }
 
 .main-content dl {
@@ -302,21 +423,21 @@ a:hover {
 		padding:2rem 4rem;
 		margin:0 auto;
 		font-size:1rem;
-}
+	}
 }
 
 @media screen and (min-width:42em) and (max-width:64em) {
 	.main-content {
 		padding:2rem 2rem;
 		font-size:1rem;
-}
+	}
 }
 
 @media screen and (max-width:42em) {
 	.main-content {
 		padding:2rem 1rem;
 		font-size:1rem;
-}
+	}
 }
 
 .site-footer {
@@ -337,17 +458,17 @@ a:hover {
 @media screen and (min-width:64em) {
 	.site-footer {
 		font-size:1rem;
-}
+	}
 }
 
 @media screen and (min-width:42em) and (max-width:64em) {
 	.site-footer {
 		font-size:1rem;
-}
+	}
 }
 
 @media screen and (max-width:42em) {
 	.site-footer {
 		font-size:0.9rem;
-}
+	}
 }

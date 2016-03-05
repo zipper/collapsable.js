@@ -1,13 +1,16 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html class="no-js" lang="en-us">
   <head>
     <meta charset="UTF-8">
     <title>jQuery Collapsable by zipper</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+		<script type="text/javascript">document.documentElement.className = document.documentElement.className.replace('no-js','js');</script>
     <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/octicons.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/jquery.collapsable.css" media="screen">
   </head>
   <body>
     <section class="page-header">
@@ -29,7 +32,7 @@
 				Installation
 			</h2>
 
-			<p>Plugin is registered on bower under the name <code>jquery.collapsable</code>, you can install it using command <code>bower install jquery.collapsable</code>, Or using <code>bower.json</code>:</p>
+			<p>Plugin is registered on bower under the name <code>jquery.collapsable</code>, you can install it using command <code>bower install jquery.collapsable</code>, or using <code>bower.json</code>:</p>
 			<div class="highlight highlight-source-js"><pre>$ cat <span class="pl-smi">bower</span>.<span class="pl-smi">json</span>
 {
     <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>My Project Name<span class="pl-pds">"</span></span>,
@@ -38,6 +41,177 @@
     }
 }</pre></div>
 
+			<h2>
+				<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+				Examples
+			</h2>
+
+			<h3>
+				<a id="basic-usage" class="anchor" href="#basic-usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+				Basic usage
+			</h3>
+			<p>
+				Plugin will automatically create anchor into the control element as seen in first collapsable box. That is the
+				simplest possible example. No effect is specified, so only the class is toggled. Next boxes already have anchor
+				inside control element which has the <code>ca-ico</code> class set. Attribute <code>href</code> may navigate to
+				different page (for example instead of expanding box with JavaScript turned off) or may be an anchor to collapsable box.
+				Second box has set
+				<code>fx<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>toggle<span class="pl-pds">'</span></span></code>,
+				which uses jQuery function <code>show</code> and <code>hide</code>, last one
+				<code>fx<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>slide<span class="pl-pds">'</span></span></code>,
+				which uses <code>slideDown</code> and <code>slideUp</code>.
+			</p>
+			<div class="col-preview">
+				<h4>Preview</h4>
+
+		<div class="collapsable collapsable-basic">
+			<h5 class="ca-control">Basic collapsable box</h5>
+			<div class="ca-box">
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi lacinia lorem sit amet elit ullamcorper hendrerit. Pellentesque rhoncus eget sem in varius. Nulla congue lectus sed leo scelerisque scelerisque. Cras iaculis pulvinar velit. Proin ac lectus at elit tristique rhoncus. In pellentesque blandit feugiat. Interdum et malesuada fames ac ante ipsum primis in faucibus. Aenean at dictum purus. Sed non fringilla dolor.</p>
+			</div>
+		</div>
+
+		<div id="ca-1" class="collapsable collapsable-toggle">
+			<h5 class="ca-control"><a href="#ca-1" class="ca-ico">Collapsable with toggle</a></h5>
+			<div class="ca-box">
+				<p>Nulla sit amet euismod nulla. Nunc tincidunt lectus eget felis volutpat, non scelerisque erat ornare. Phasellus vehicula ex eu tincidunt sodales. In hac habitasse platea dictumst. Donec tincidunt malesuada mi, vel sagittis arcu facilisis eget. Nam arcu ipsum, cursus sit amet purus vel, aliquet elementum dui. Nulla ultrices pulvinar velit, sit amet egestas est varius sed. Etiam tempor ex non porta porta. In interdum blandit urna ac vulputate. Nam facilisis arcu congue, fermentum enim vel, blandit mauris. Donec consectetur luctus volutpat.</p>
+			</div>
+		</div>
+
+		<div id="ca-2" class="collapsable collapsable-slide">
+			<h5 class="ca-control"><a href="https://github.com/zipper/jquery.collapsable" class="ca-ico">Sliding collapsable box</a></h5>
+			<div class="ca-box">
+				<p>Curabitur sed orci at elit euismod euismod et ac sem. Phasellus mattis arcu vitae dapibus sagittis. Mauris sit amet dictum velit, vitae venenatis lectus. Donec velit nisi, laoreet vel risus iaculis, maximus cursus sem. Suspendisse potenti. Nulla molestie purus sit amet lectus varius consequat ac ut neque. Donec eu tincidunt ex. Maecenas cursus semper ex finibus eleifend. Nullam erat neque, elementum ac egestas sit amet, porttitor eget sem.</p>
+			</div>
+		</div>
+
+			</div>
+
+			<div class="col-source">
+				<h4>HTML</h4>
+				<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">div</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>collapsable collapsable-basic<span class="pl-pds">"</span></span>&gt;
+  &lt;<span class="pl-ent">h5</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>ca-control<span class="pl-pds">"</span></span>&gt;Basic collapsable box&lt;/<span class="pl-ent">h5</span>&gt;
+  &lt;<span class="pl-ent">div</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>ca-box<span class="pl-pds">"</span></span>&gt;
+    &lt;<span class="pl-ent">p</span>&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi lacinia lorem sit amet elit ullamcorper hendrerit. Pellentesque rhoncus eget sem in varius. Nulla congue lectus sed leo scelerisque scelerisque. Cras iaculis pulvinar velit. Proin ac lectus at elit tristique rhoncus. In pellentesque blandit feugiat. Interdum et malesuada fames ac ante ipsum primis in faucibus. Aenean at dictum purus. Sed non fringilla dolor.&lt;/<span class="pl-ent">p</span>&gt;
+  &lt;/<span class="pl-ent">div</span>&gt;
+&lt;/<span class="pl-ent">div</span>&gt;
+
+&lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">"</span>ca-1<span class="pl-pds">"</span></span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>collapsable collapsable-toggle<span class="pl-pds">"</span></span>&gt;
+  &lt;<span class="pl-ent">h5</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>ca-control<span class="pl-pds">"</span></span>&gt;&lt;<span class="pl-ent">a</span> <span class="pl-e">href</span>=<span class="pl-s"><span class="pl-pds">"</span>#ca-1<span class="pl-pds">"</span></span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>ca-ico<span class="pl-pds">"</span></span>&gt;Collapsable with toggle&lt;/<span class="pl-ent">a</span>&gt;&lt;/<span class="pl-ent">h5</span>&gt;
+  &lt;<span class="pl-ent">div</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>ca-box<span class="pl-pds">"</span></span>&gt;
+    &lt;<span class="pl-ent">p</span>&gt;Nulla sit amet euismod nulla. Nunc tincidunt lectus eget felis volutpat, non scelerisque erat ornare. Phasellus vehicula ex eu tincidunt sodales. In hac habitasse platea dictumst. Donec tincidunt malesuada mi, vel sagittis arcu facilisis eget. Nam arcu ipsum, cursus sit amet purus vel, aliquet elementum dui. Nulla ultrices pulvinar velit, sit amet egestas est varius sed. Etiam tempor ex non porta porta. In interdum blandit urna ac vulputate. Nam facilisis arcu congue, fermentum enim vel, blandit mauris. Donec consectetur luctus volutpat.&lt;/<span class="pl-ent">p</span>&gt;
+  &lt;/<span class="pl-ent">div</span>&gt;
+&lt;/<span class="pl-ent">div</span>&gt;
+
+&lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">"</span>ca-2<span class="pl-pds">"</span></span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>collapsable collapsable-slide<span class="pl-pds">"</span></span>&gt;
+  &lt;<span class="pl-ent">h5</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>ca-control<span class="pl-pds">"</span></span>&gt;&lt;<span class="pl-ent">a</span> <span class="pl-e">href</span>=<span class="pl-s"><span class="pl-pds">"</span>https://github.com/zipper/jquery.collapsable<span class="pl-pds">"</span></span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>ca-ico<span class="pl-pds">"</span></span>&gt;Sliding collapsable box&lt;/<span class="pl-ent">a</span>&gt;&lt;/<span class="pl-ent">h5</span>&gt;
+  &lt;<span class="pl-ent">div</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>ca-box<span class="pl-pds">"</span></span>&gt;
+    &lt;<span class="pl-ent">p</span>&gt;Curabitur sed orci at elit euismod euismod et ac sem. Phasellus mattis arcu vitae dapibus sagittis. Mauris sit amet dictum velit, vitae venenatis lectus. Donec velit nisi, laoreet vel risus iaculis, maximus cursus sem. Suspendisse potenti. Nulla molestie purus sit amet lectus varius consequat ac ut neque. Donec eu tincidunt ex. Maecenas cursus semper ex finibus eleifend. Nullam erat neque, elementum ac egestas sit amet, porttitor eget sem.&lt;/<span class="pl-ent">p</span>&gt;
+  &lt;/<span class="pl-ent">div</span>&gt;
+&lt;/<span class="pl-ent">div</span>&gt;</pre></div>
+
+				<h4>JavaScript</h4>
+				<div class="highlight highlight-source-js"><pre><span class="pl-en">$</span>(<span class="pl-s"><span class="pl-pds">'</span>.collapsable-basic<span class="pl-pds">'</span></span>).<span class="pl-en">collapsable</span>();
+
+<span class="pl-en">$</span>(<span class="pl-s"><span class="pl-pds">'</span>.collapsable-toggle<span class="pl-pds">'</span></span>).<span class="pl-en">collapsable</span>({
+  fx<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>toggle<span class="pl-pds">'</span></span>
+});
+
+<span class="pl-en">$</span>(<span class="pl-s"><span class="pl-pds">'</span>.collapsable-slide<span class="pl-pds">'</span></span>).<span class="pl-en">collapsable</span>({
+  fx<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>slide<span class="pl-pds">'</span></span>,
+  fxDuration<span class="pl-k">:</span> <span class="pl-c1">300</span>
+});</pre></div>
+
+			</div>
+			<div class="break"></div>
+
+			<h3>
+				<a id="opt-grouped" class="anchor" href="#opt-grouped" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+				Grouped boxes
+			</h3>
+			<p>Option <code>grouped</code> specifies, that boxes are connected to each other and you may open only one at time, so there is always zero or one expanded box.</p>
+			<div class="col-preview">
+				<h4>Preview</h4>
+
+				<div id="ca-3" class="collapsable collapsable-grouped">
+					<h5 class="ca-control"><a href="#ca-3" class="ca-ico">Grouped box 1</a></h5>
+					<div class="ca-box">
+						<p>Aliquam vitae diam convallis lorem luctus maximus eget at massa. Sed lobortis cursus augue. Curabitur at pretium nibh. Integer ipsum risus, sagittis id leo ut, lobortis mollis nulla. Sed vehicula nisi vel erat tempus, id posuere arcu iaculis. Vestibulum vehicula cursus elementum. Vestibulum quis mi quis nisl placerat porttitor non ac magna. Cras erat diam, tincidunt non cursus a, hendrerit et enim. Maecenas consequat tellus et nisl condimentum fermentum. Aliquam luctus egestas maximus. Nam dictum viverra venenatis.</p>
+					</div>
+				</div>
+
+				<div id="ca-4" class="collapsable collapsable-grouped">
+					<h5 class="ca-control"><a href="#ca-4" class="ca-ico">Grouped box 2</a></h5>
+					<div class="ca-box">
+						<p>Fusce nibh magna, accumsan eu orci vitae, convallis facilisis enim. Proin leo urna, tristique vel consectetur quis, gravida non ante. Aliquam erat volutpat. Vivamus varius sapien sapien, eget blandit quam molestie ut. Fusce rutrum id sem quis dapibus. Nullam vel urna ac erat eleifend dapibus. Phasellus cursus volutpat purus, in fermentum mauris vulputate sed. Phasellus sagittis sem ex, sit amet consectetur felis luctus eu. Vestibulum elementum libero eu libero pharetra lobortis. Curabitur dignissim sapien ut est varius, ac sollicitudin nunc euismod. Duis augue justo, accumsan eget sapien eu, aliquet lobortis lacus.</p>
+					</div>
+				</div>
+
+				<div id="ca-5" class="collapsable collapsable-grouped">
+					<h5 class="ca-control"><a href="#ca-5" class="ca-ico">Grouped box 3</a></h5>
+					<div class="ca-box">
+						<p>Quisque lobortis dolor erat, eu interdum leo elementum in. Pellentesque placerat, ligula viverra laoreet imperdiet, urna augue dignissim nulla, nec finibus nisi urna sed nisi. Praesent viverra ornare arcu at luctus. Maecenas non nunc sapien. Nullam eget purus ornare, ultricies sapien sit amet, ullamcorper lacus. Proin id convallis quam. Duis nec tincidunt orci. In leo turpis, finibus at ex vitae, finibus maximus dolor. Praesent viverra eget metus id auctor. Nam semper sed urna in tempus. In eu ornare quam. Suspendisse quis ornare nibh. </p>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-source">
+				<h4>HTML</h4>
+				<p>Sample code is very similar to <a href="#basic-usage">basic example</a>, except the class on boxes is <code>collapsable-grouped</code>. See <a href="#" onclick="return !window.open('view-source:' + window.location.href, 'source', '')">source code</a> for details if needed.</p>
+
+				<h4>JavaScript</h4>
+				<div class="highlight highlight-source-js"><pre><span class="pl-en">$</span>(<span class="pl-s"><span class="pl-pds">'</span>.collapsable-grouped<span class="pl-pds">'</span></span>).<span class="pl-en">collapsable</span>({
+  grouped<span class="pl-k">:</span> <span class="pl-c1">true</span>,
+  fx<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>slide<span class="pl-pds">'</span></span>,
+  fxDuration<span class="pl-k">:</span> <span class="pl-c1">300</span>
+});</pre></div>
+
+			</div>
+			<div class="break"></div>
+
+			<h3>
+				<a id="opt-collapsableAll" class="anchor" href="#opt-collapsableAll" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+				Always at least one visible box
+			</h3>
+			<p>With <code>collapsableAll</code> option is set to true, there will always be at least one expanded item &ndash; you won't be able to close all. You can combine this option with <code>grouped</code> from <a href="#opt-grouped">previous example</a>. That will result in exactly one expanded box all the time.</p>
+			<div class="col-preview">
+				<h4>Preview</h4>
+
+				<div id="ca-6" class="collapsable collapsable-collapsableAll">
+					<h5 class="ca-control"><a href="#ca-6" class="ca-ico">Non-collapsable-all box 1</a></h5>
+					<div class="ca-box">
+						<p>Cras lacinia risus sem, rhoncus dictum tortor tincidunt in. Integer sit amet ex dui. Maecenas et dui metus. Fusce in ligula a libero pulvinar tempus.</p>
+					</div>
+				</div>
+
+				<div id="ca-7" class="collapsable collapsable-collapsableAll">
+					<h5 class="ca-control"><a href="#ca-7" class="ca-ico">Non-collapsable-all box 2</a></h5>
+					<div class="ca-box">
+						<p>Integer non mollis quam. Ut dapibus sed dui eu elementum. Aliquam et neque erat. Duis commodo mauris nisl, vitae cursus urna convallis in.</p>
+					</div>
+				</div>
+
+				<div id="ca-8" class="collapsable collapsable-collapsableAll">
+					<h5 class="ca-control"><a href="#ca-8" class="ca-ico">Non-collapsable-all box 3</a></h5>
+					<div class="ca-box">
+						<p>Sed feugiat dapibus euismod. Donec tristique condimentum urna eget maximus. Nulla scelerisque condimentum enim sed ornare. Etiam nec lacus sed justo lacinia efficitur.</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-source">
+				<h4>HTML</h4>
+				<p>Sample code is very similar to <a href="#basic-usage">basic example</a>, except the class on boxes is <code>collapsable-collapsableAll</code>. See <a href="#" onclick="return !window.open('view-source:' + window.location.href, 'source', '')">source code</a> for details if needed.</p>
+
+				<h4>JavaScript</h4>
+				<div class="highlight highlight-source-js"><pre><span class="pl-en">$</span>(<span class="pl-s"><span class="pl-pds">'</span>.collapsable-collapsableAll<span class="pl-pds">'</span></span>).<span class="pl-en">collapsable</span>({
+  collapsableAll<span class="pl-k">:</span> <span class="pl-c1">false</span>,
+  fx<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>slide<span class="pl-pds">'</span></span>,
+  fxDuration<span class="pl-k">:</span> <span class="pl-c1">300</span>
+});</pre></div>
+
+			</div>
+			<div class="break"></div>
 
 			<h2>
         <a id="options" class="anchor" href="#options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
@@ -56,19 +230,19 @@
 				<tbody>
 					<tr>
 						<td>control</td>
-						<td><code>.ca-control</code></td>
+						<td><code>'.ca-control'</code></td>
 						<td>String</td>
 						<td>CSS selector for control element.</td>
 					</tr>
 					<tr>
 						<td>box</td>
-						<td><code>.ca-box</code></td>
+						<td><code>'.ca-box'</code></td>
 						<td>String</td>
 						<td>CSS selector for box element.</td>
 					</tr>
 					<tr>
 						<td>event</td>
-						<td><code>click</code></td>
+						<td><code>'click'</code></td>
 						<td>String</td>
 						<td>Event binded to control element. This event will trigger box expanding / collapsing.</td>
 					</tr>
@@ -76,7 +250,7 @@
 						<td>preventDefault</td>
 						<td><code>true</code></td>
 						<td>Boolean</td>
-						<td>Whether <code>e.preventDefault()</code> is called on event binded on control element.</td>
+						<td>Whether <code>e.preventDefault()</code> is called on event binded on control element. This prevents browser from scrolling to anchor or navigating to link address. Alternatively, you can call <code>e.originalEvent.preventDefault()</code> inside expand.collapsable (<code>collapse.collapsable</code>) handlers instead.</td>
 					</tr>
 					<tr>
 						<td rowspan="2">fx</td>
@@ -106,24 +280,24 @@
 						</td>
 					</tr>
 					<tr>
-						<td>grouped</td>
+						<td><a href="#opt-grouped" title="See related example">grouped</a></td>
 						<td><code>false</code></td>
 						<td>Boolean</td>
 						<td>If set to <code>true</code>, only one box from set on which collapsable has been initialized could be opened at the same time.</td>
 					</tr>
 					<tr>
-						<td>collapsableAll</td>
+						<td><a href="#opt-collapsableAll" title="See related example">collapsableAll</a></td>
 						<td><code>true</code></td>
 						<td>Boolean</td>
 						<td>Whether all box could be closed at the same time. If set to <code>false</code>, there is always at least one box from set opened.</td>
 					</tr>
 					<tr>
 						<td>extLinks</td>
-						<td><code>{&hellip;}</code></td>
+						<td><code>{<a href="#extLinks">&hellip;</a>}</code></td>
 						<td>Object</td>
-						<td>Object containing three properties... tba</td>
+						<td>Object, see below</td>
 					</tr>
-					<tr class="indent">
+					<tr id="extLinks" class="indent">
 						<td>selector</td>
 						<td><code>''</code></td>
 						<td>String</td>
@@ -137,9 +311,33 @@
 					</tr>
 					<tr>
 						<td>classNames</td>
-						<td><code>{&hellip;}</code></td>
+						<td><code>{<a href="#classNames">&hellip;</a>}</code></td>
 						<td>Object</td>
-						<td>Object containing three properties... tba</td>
+						<td>Object, see below</td>
+					</tr>
+					<tr id="classNames" class="indent">
+						<td>expanded</td>
+						<td><code>'.ca-expanded'</code></td>
+						<td>String</td>
+						<td>CSS class assigned by script to expanded items. Elements on which collapsable as been initialized recieves it.</td>
+					</tr>
+					<tr class="indent">
+						<td>collpased</td>
+						<td><code>'.ca-collapsed'</code></td>
+						<td>String</td>
+						<td>CSS class assigned by script to collapsed items. Elements on which collapsable as been initialized recieves it.</td>
+					</tr>
+					<tr class="indent">
+						<td>defaultExpanded</td>
+						<td><code>'.ca-default-expanded'</code></td>
+						<td>String</td>
+						<td>Items with this class in HTML will be expanded by default after collapsable initialization.</td>
+					</tr>
+					<tr class="indent">
+						<td>extLinkActive</td>
+						<td><code>'.ca-ext-active'</code></td>
+						<td>String</td>
+						<td>When a box is expanded, external links heading to it will recieve this class.</td>
 					</tr>
 				</tbody>
 			</table>
@@ -183,7 +381,9 @@
 		</section>
 
 
-		<script src=""></script>
+		<script src="https://code.jquery.com/jquery-1.12.1.min.js"></script>
+		<script src="https://raw.githubusercontent.com/zipper/jquery.collapsable/master/dist/jquery.collapsable.js"></script>
+		<script src="/js/main.js"></script>
 
   </body>
 </html>
