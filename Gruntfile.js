@@ -22,7 +22,7 @@ module.exports = function(grunt) {
 		},
 		uglify: {
 			options: {
-				banner: '/*! <%= pkg.title %> v<%= pkg.version %> | <%= pkg.license %> | <%= pkg.author.name %>, <%= pkg.homepage %> */\n'
+				banner: '/*! <%= pkg.title %> <%= pkg.version %> | <%= pkg.license %> | <%= pkg.author.name %>, <%= pkg.homepage %> */\n'
 			},
 			production: {
 				files: {

@@ -14,7 +14,7 @@
 		box: '.ca-box',         // CSS selector for hideable element (box)
 		event: 'click',         // event triggering the expand/collapse
 
-		fx: false,              // effect for expanding/collapsing, [ false | toggle | slide | fade | {Object} ]
+		fx: null,               // effect for expanding/collapsing, [ false | toggle | slide | fade | {Object} ]
 		fxDuration: 0,          // duration of the effect, affects delay between `expand.collapsable`(`collapse.collapsable`) and `expanded.collapsable` (`collapsed.collapsable`) evetns are triggered; default value is 500 when fx set to slide
 
 		grouped: false,         // determines, if there could be more than one expanded box in same time; related to jQuery set on which initialized
@@ -22,15 +22,15 @@
 		preventDefault: true,   // whether prevenDefault should be called when specified event occurs on control; even if false, e.originalEvent.preventDefault() may be used inside collapsable event handlers
 
 		extLinks: {             // external links for operating collapsable set, can be anywhere else in DOM
-			selector: null,     // CSS selector for external links; it has to be anchors; the click event is binded
-			preventDefault: false, // whether preventDefault is called on extLinks click
-			activeClass: 'ca-ext-active' // class which would be toggled on external link when associated box is expanded or collapsed
+			selector: '',       // CSS selector for external links; it has to be anchors; the click event is binded
+			preventDefault: false // whether preventDefault is called on extLinks click
 		},
 
 		classNames: {            // CSS class names to be used on collapsable box; they are added to element, on which collapsable has been called
 			expanded: 'ca-expanded',
 			collapsed: 'ca-collapsed',
-			defaultExpanded: 'ca-default-expanded'
+			defaultExpanded: 'ca-default-expanded',
+			extLinkActive: 'ca-ext-active'
 		}
 
 		// callbacks are no more available, use event handlers instead
@@ -292,7 +292,7 @@
 		var l = this.items.length;
 
 		for (var i = 0; i < l; i++) {
-			if (this.items[i].isExpanded()) {
+			if (this.items[i].isExpanded) {
 				expanded.push(i);
 			}
 		}
@@ -316,7 +316,7 @@
 		var l = this.items.length;
 
 		for (var i = 0; i < l; i++) {
-			if (!this.items[i].isExpanded()) {
+			if (! this.items[i].isExpanded) {
 				var expanded = this.items[i].expand(event, data);
 
 				if (this.opts.grouped && expanded) {
@@ -356,21 +356,25 @@
 			// remove classes and event handlers from main element
 			item.$collapsable
 				.removeClass(opts.classNames.collapsed + ' ' + opts.classNames.expanded)
-				.removeData('collapsable')
-				.off(opts.event + '.collapsable');
+				.removeData('collapsable');
 
 			// revert control element
-			item.$control.removeClass('ca-link');
-			item.$control.find('.ca-link').removeClass('ca-link');
 			item.$control.find('[data-ca-created]').each(function () {
 				$(this).parent().html($(this).html());
 			});
+			item.$control
+				.find('.ca-link').addBack('.ca-link')
+				.off(opts.event + '.collapsable')
+				.removeClass('ca-link')
+				.removeAttr('aria-controls')
+				.removeAttr('aria-expanded');
 
 			// revert box element
 			var style = item.$box.data('ca-pre-init-style') || '';
 			item.$box
 				.attr('style', style)
-				.removeData('ca-pre-init-style');
+				.removeData('ca-pre-init-style')
+				.removeAttr('aria-hidden');
 
 			item.$collapsable.trigger('destroy.collapsable');
 		}
@@ -458,7 +462,7 @@
 				event.preventDefault();
 			}
 
-			if (that.isExpanded()) {
+			if (that.isExpanded) {
 				that.collapse(passEvent);
 			}
 			else {
@@ -495,28 +499,25 @@
 
 		var event = $.Event(trigger + '.collapsable', { customData: data, originalEvent: originalEvent });
 
+		this.isExpanded = action === 'expand';
+
 		// update extLinks
 		this.parent.$extLinks
 			.filter('[href=#' + this.id + ']')
-			[action === 'expand' ? 'addClass' : 'removeClass'](opts.extLinks.activeClass);
-
-		// update classes on collapsable element itself
-		this.$collapsable
-			.removeClass(removeClass)
-			.addClass(addClass);
+			[action === 'expand' ? 'addClass' : 'removeClass'](opts.classNames.extLinkActive);
 
 		// aria support
 		this.$controlLink.attr('aria-expanded', action === 'expand');
 		this.$box.attr('aria-hidden', action !== 'expand');
 
 		// actually toggle the box state
-		if(typeof opts.fx === 'object') {
+		if(opts.fx && typeof opts.fx === 'object') {
 			this.$box[opts.fx[action]](opts.fxDuration, function () {
 				that.$collapsable.trigger(event);
 			});
 		}
 		else {
-			if(opts.fx == 'toggle') {
+			if(opts.fx === 'toggle') {
 				this.$box[action === 'expand' ? 'show' : 'hide']();
 			}
 
@@ -524,6 +525,11 @@
 				that.$collapsable.trigger(event);
 			}, opts.fxDuration);
 		}
+
+		// update classes on collapsable element itself
+		this.$collapsable
+			.removeClass(removeClass)
+			.addClass(addClass);
 
 		return true;
 	}
@@ -586,14 +592,6 @@
 		}
 
 		return handleExpandCollapse.call(this, 'collapse', originalEvent);
-	};
-
-	/**
-	 * Tests if the CollapsableItem is expanded or not
-	 * @returns {Boolean}
-	 */
-	CollapsableItem.prototype.isExpanded = function() {
-		return this.$collapsable.hasClass(this.parent.opts.classNames.expanded);
 	};
 
 
