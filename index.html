@@ -20,59 +20,103 @@
 
     <section class="main-content">
       <h1>
-<a id="jquery-collapsable" class="anchor" href="#jquery-collapsable" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>jQuery Collapsable</h1>
+        <a id="jquery-collapsable" class="anchor" href="#jquery-collapsable" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+        jQuery Collapsable
+      </h1>
 
-<h2>
-<a id="options" class="anchor" href="#options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Options</h2>
+      <h2>
+        <a id="options" class="anchor" href="#options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+        Options
+      </h2>
 
-<table>
-<thead>
-<tr>
-<th align="left">Option</th>
-<th align="left">Default Value</th>
-<th align="left">Datatype</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="left">control</td>
-<td align="left"><code>.ca-control</code></td>
-<td align="left">String</td>
-<td align="left">CSS selector for control element.</td>
-</tr>
-<tr>
-<td align="left">box</td>
-<td align="left"><code>.ca-box</code></td>
-<td align="left">String</td>
-<td align="left">CSS selector for box element.</td>
-</tr>
-<tr>
-<td align="left">event</td>
-<td align="left"><code>click</code></td>
-<td align="left">String</td>
-<td align="left">Event binded to control element. On this event, the box will be expanded / collapsed</td>
-</tr>
-<tr>
-<td align="left">fx</td>
-<td align="left"><code>null</code></td>
-<td align="left">Object</td>
-<td align="left">Effect used for expanding / collapsing. When <code>null</code> is passed, only class name is changed. Alternatively, object containing properties <code>expand</code> and <code>collapse</code> may be passed. In this case, values will be used as functions for expanding and collapsing. Example:</td>
-</tr>
-<tr>
-<td align="left">fx</td>
-<td align="left"><code>null</code></td>
-<td align="left">String</td>
-<td align="left">There are three predefined string values that can be used -- <code>toggle</code>, <code>slide</code> and <code>fade</code>
-</td>
-</tr>
-</tbody>
-</table>
-
+			<table>
+				<thead>
+					<tr>
+						<th>Option</th>
+						<th>Default Value</th>
+						<th>Datatype</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>control</td>
+						<td><code>.ca-control</code></td>
+						<td>String</td>
+						<td>CSS selector for control element.</td>
+					</tr>
+					<tr>
+						<td>box</td>
+						<td><code>.ca-box</code></td>
+						<td>String</td>
+						<td>CSS selector for box element.</td>
+					</tr>
+					<tr>
+						<td>event</td>
+						<td><code>click</code></td>
+						<td>String</td>
+						<td>Event binded to control element. This event will trigger box expanding / collapsing.</td>
+					</tr>
+					<tr>
+						<td>preventDefault</td>
+						<td><code>true</code></td>
+						<td>Boolean</td>
+						<td>Whether <code>e.preventDefault()</code> is called on event binded on control element.</td>
+					</tr>
+					<tr>
+						<td rowspan="2">fx</td>
+						<td rowspan="2"><code>null</code></td>
+						<td>Object</td>
+						<td>
+							Effect used for expanding / collapsing. When <code>null</code> is passed, only class name is changed. Alternatively, object containing properties <code>expand</code> and <code>collapse</code> may be passed. In this case, values will be used as functions for expanding and collapsing. These functions will be called on jQuery object (on box element). Example:
 <div class="highlight highlight-source-js"><pre>{
   expand<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>slideDown<span class="pl-pds">'</span></span>,
-  collapse<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>slideUp<span class="pl-pds">'</span></span>
+  collapse<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>fadeIn<span class="pl-pds">'</span></span>
 }</pre></div>
+
+						</td>
+					</tr>
+					<tr>
+						<td>String</td>
+						<td>There are three predefined string values that can be used &ndash; <code>toggle</code>, <code>slide</code> and <code>fade</code>. These functions are internally mapped into objects containing name of jQuery functions <code>show</code>/<code>hide</code>, <code>slideDown</code>/<code>slideUp</code> and <code>fadeIn</code>/<code>fadeOut</code></td>
+					</tr>
+					<tr>
+						<td>fxDuration</td>
+						<td><code>0</code></td>
+						<td>Integer</td>
+						<td>
+							Duration of the effect configured using <code>fx</code> parameter. When jQuery functions are used, it is duration in milliseconds, when custom functions are used, this parameter is passed into them.<br><br>
+							This value also defines the delay between events <code>expand.collapsable</code> and  <code>expanded.collapsable</code> (<code>collapse.collapsable</code> and  <code>collapsed.collapsable</code> respectively) are triggered.<br><br>
+							When <code>fx</code> is set to <code>slide</code> or <code>fade</code>, the default value is 500.
+						</td>
+					</tr>
+					<tr>
+						<td>grouped</td>
+						<td><code>false</code></td>
+						<td>Boolean</td>
+						<td>If set to <code>true</code>, only one box from set on which collapsable has been initialized could be opened at the same time.</td>
+					</tr>
+					<tr>
+						<td>collapsableAll</td>
+						<td><code>true</code></td>
+						<td>Boolean</td>
+						<td>Whether all box could be closed at the same time. If set to <code>false</code>, there is always at least one box from set opened.</td>
+					</tr>
+					<tr>
+						<td>extLinks</td>
+						<td><code>{&hellip;}</code></td>
+						<td>Object</td>
+						<td>Object containing three properties... tba</td>
+					</tr>
+					<tr>
+						<td>classNames</td>
+						<td><code>{&hellip;}</code></td>
+						<td>Object</td>
+						<td>Object containing three properties... tba</td>
+					</tr>
+				</tbody>
+			</table>
+
 
 <h2>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
@@ -107,6 +151,8 @@
 
     </section>
 
-  
+
+		<script src=""></script>
+
   </body>
 </html>
