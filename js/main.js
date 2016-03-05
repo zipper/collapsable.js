@@ -1,5 +1,22 @@
 $(function () {
 
+	$('.example').collapsable({
+		control: '> h2 .ca-link',
+		box: '.example-content',
+		fx: 'slide',
+		fxDuration: 300,
+
+		extLinks: {
+			selector: '.example .anchor, .ca-ext-link'
+		},
+
+		classNames: {
+			expanded: 'example-expanded',
+			collapsed: 'example-collapsed'
+		}
+	});
+
+
 	$('.collapsable-basic').collapsable();
 
 	$('.collapsable-toggle').collapsable({

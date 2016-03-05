@@ -210,12 +210,12 @@ a:hover {
 	font-size:1rem;
 }
 
-.main-content .ca-link, .main-content .ca-box {
+.main-content .collapsable .ca-link, .main-content .ca-box {
 	display:block;
 	padding:.8rem;
 }
 
-.main-content .ca-expanded .ca-link {
+.main-content .collapsable.ca-expanded .ca-link {
 	border-bottom:1px solid #f3f5f6;
 }
 
