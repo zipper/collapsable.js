@@ -7,19 +7,19 @@
 
 	/**
 	 * Collapsable defaults
-	 * @type {{control: string, box: string, event: string, fx: boolean, fxDuration: number, grouped: boolean, collapsableAll: boolean, preventDefault: boolean, extLinks: {selector: null, preventDefault: boolean, activeClass: string}, classNames: {expanded: string, collapsed: string, defaultExpanded: string}}}
+	 * @type {{control: string, box: string, event: string, fx: boolean, fxDuration: number, accordion: boolean, collapsableAll: boolean, preventDefault: boolean, extLinks: {selector: null, preventDefault: boolean, activeClass: string}, classNames: {expanded: string, collapsed: string, defaultExpanded: string}}}
 	 */
 	var defaults = {
 		control: '.ca-control', // CSS selector for control element
 		box: '.ca-box',         // CSS selector for hideable element (box)
 		event: 'click',         // event triggering the expand/collapse
+		preventDefault: true,   // whether prevenDefault should be called when specified event occurs on control; even if false, e.originalEvent.preventDefault() may be used inside collapsable event handlers
 
 		fx: null,               // effect for expanding/collapsing, [ false | toggle | slide | fade | {Object} ]
 		fxDuration: 0,          // duration of the effect, affects delay between `expand.collapsable`(`collapse.collapsable`) and `expanded.collapsable` (`collapsed.collapsable`) evetns are triggered; default value is 500 when fx set to slide
 
-		grouped: false,         // determines, if there could be more than one expanded box in same time; related to jQuery set on which initialized
+		accordion: false,       // determines, if there could be more than one expanded box in same time; related to jQuery set on which initialized
 		collapsableAll: true,   // possibility of collapsing all boxes from set
-		preventDefault: true,   // whether prevenDefault should be called when specified event occurs on control; even if false, e.originalEvent.preventDefault() may be used inside collapsable event handlers
 
 		extLinks: {             // external links for operating collapsable set, can be anywhere else in DOM
 			selector: '',       // CSS selector for external links; it has to be anchors; the click event is binded
@@ -122,8 +122,8 @@
 
 
 	/**
-	 * Prepare default expanded item. Checks the necessity of expanded item (collapsableAll set to false && grouped set
-	 * to true) and limits amount of default expanded items to 1 when grouped option set to true. Also when there's
+	 * Prepare default expanded item. Checks the necessity of expanded item (collapsableAll set to false && accordion set
+	 * to true) and limits amount of default expanded items to 1 when accordion option set to true. Also when there's
 	 * fragment in url targeting existing collapsable item, default expanded set using class in DOM will be overridden.
 	 *
 	 * @summary Sets the defaultExpanded flag to appropriate CollapsableItems
@@ -149,14 +149,14 @@
 				this.items[defaultExpandedFromUrl].defaultExpanded = true;
 
 				// max 1, we can return now
-				if (this.opts.grouped) {
+				if (this.opts.accordion) {
 					return;
 				}
 			}
 		}
 
 		// max 1 expanded item
-		if (this.opts.grouped) {
+		if (this.opts.accordion) {
 			defaultExpanded = $items.index($('.' + this.opts.classNames.defaultExpanded));
 
 			// max 1, we can return now
@@ -166,7 +166,7 @@
 			}
 		}
 
-		// not grouped, we add flag to all items with class
+		// not accordion, we add flag to all items with class
 		else {
 			var that = this;
 			$items.each(function (i) {
@@ -187,7 +187,7 @@
 	/**
 	 * Expand or collapse item based on flags set in prepareDefaultExpanded method; called on initialization within the
 	 * context of Collapsable
-	 * @todo When !opts.collapseAll && opts.grouped, we now force-open the first item with defaultExpanded flag, regardless how it got it (hash in url or class); potentially force-open the one from URL instead of first, if hash set? or maybe try to open some without forcing and only if failed, do force-open (would require two passes)?
+	 * @todo When !opts.collapseAll && opts.accordion, we now force-open the first item with defaultExpanded flag, regardless how it got it (hash in url or class); potentially force-open the one from URL instead of first, if hash set? or maybe try to open some without forcing and only if failed, do force-open (would require two passes)?
 	 * @this Collapsable
 	 * @private
 	 */
@@ -306,8 +306,8 @@
 	 * @param {Object} data - Data to be passed to triggered event
 	 */
 	Collapsable.prototype.expandAll = function (data) {
-		// if grouped, we only want to expand one (first) box, or none if already expanded
-		if (this.opts.grouped && this.getExpanded().length) {
+		// if accordion, we only want to expand one (first) box, or none if already expanded
+		if (this.opts.accordion && this.getExpanded().length) {
 			return;
 		}
 
@@ -319,7 +319,7 @@
 			if (! this.items[i].isExpanded) {
 				var expanded = this.items[i].expand(event, data);
 
-				if (this.opts.grouped && expanded) {
+				if (this.opts.accordion && expanded) {
 					break;
 				}
 			}
@@ -543,11 +543,11 @@
 	 */
 	CollapsableItem.prototype.expand = function(originalEvent, data, force) {
 		var opts = this.parent.opts;
-		var expandedItem = this.parent.getExpanded(); // grouped -> max one expanded item
+		var expandedItem = this.parent.getExpanded(); // accordion -> max one expanded item
 
 		this.parent.promiseOpen = true; // allows us to collapse expanded item even if there might be collapseAll === false option
-		if (opts.grouped) {
-			// before expanding, we have to collapse previously opened item, if grouped element hasn't collapsed, we can't continue
+		if (opts.accordion) {
+			// before expanding, we have to collapse previously opened item, if accordion element hasn't collapsed, we can't continue
 			if (expandedItem.length && this.parent.items[expandedItem[0]].collapse(originalEvent, data, force) === false) {
 				this.parent.promiseOpen = false;
 				return false;
@@ -559,8 +559,8 @@
 		this.$collapsable.trigger(event);
 
 		if (event.isDefaultPrevented() && ! force) {
-			// collapsableAll === false && grouped === true -> if the box has not opened, we must make sure something is opened, therefore we force-open previously opened box (opts.grouped is true means we tried to collapse something), simulating it has never closed in first place
-			if (! opts.collapsableAll && opts.grouped) {
+			// collapsableAll === false && accordion === true -> if the box has not opened, we must make sure something is opened, therefore we force-open previously opened box (opts.accordion is true means we tried to collapse something), simulating it has never closed in first place
+			if (! opts.collapsableAll && opts.accordion) {
 				this.parent.items[expandedItem[0]].expand(originalEvent, data, true);
 			}
 
