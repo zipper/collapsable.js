@@ -23,6 +23,18 @@
 
     <section class="main-content">
 			<h1>
+				<a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+				Main features
+			</h1>
+			<ul>
+				<li>Lightweight (~2.1kB minified &amp; gzipped version), yet robust (lot of options)</li>
+				<li>Cross browser compatible, including mobile browsers, tested in IE8+, Microsoft Edge, Firefox, Chrome, Safari, Opera, &hellip;</li>
+				<li>jQuery 3 ready</li>
+				<li><a href="https://www.w3.org/WAI/intro/aria">WAI ARIA <span aria-hidden="true" class="octicon octicon-link-external"></span></a> compliant</li>
+			</ul>
+
+
+			<h1>
 				<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
 				Installation
 			</h1>
@@ -32,7 +44,7 @@
 {
     <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>My Project Name<span class="pl-pds">"</span></span>,
     <span class="pl-s"><span class="pl-pds">"</span>dependencies<span class="pl-pds">"</span></span><span class="pl-k">:</span> {
-        <span class="pl-s"><span class="pl-pds">"</span>jquery.collapsable<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>~2.0.0<span class="pl-pds">"</span></span>
+        <span class="pl-s"><span class="pl-pds">"</span>jquery.collapsable<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>~2.0.2<span class="pl-pds">"</span></span>
     }
 }</pre></div>
 
@@ -124,32 +136,32 @@
 				</div>
 			</div>
 
-			<div id="grouped-boxes--accordion" class="example">
+			<div id="accordion" class="example">
 				<h2>
-					<a class="anchor" href="#grouped-boxes--accordion" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
-					<a class="ca-link" href="#grouped-boxes--accordion">Grouped boxes (accordion)</a>
+					<a class="anchor" href="#accordion" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+					<a class="ca-link" href="#accordion">Accordion</a>
 				</h2>
 				<div class="example-content">
-					<p>Option <code>grouped</code> specifies, that boxes are connected to each other and you may open only one at time, so there is always zero or one expanded box.</p>
+					<p>Option <code>accordion</code> specifies, that boxes are connected to each other and you may open only one at time, so there is always zero or one expanded box.</p>
 					<div class="col-preview">
 						<h3>Preview</h3>
 
-						<div id="ca-3" class="collapsable collapsable-grouped">
-							<h4 class="ca-control"><a href="#ca-3" class="ca-ico">Grouped box 1</a></h4>
+						<div id="ca-3" class="collapsable collapsable-accordion">
+							<h4 class="ca-control"><a href="#ca-3" class="ca-ico">Accordion box 1</a></h4>
 							<div class="ca-box">
 								<p>Aliquam vitae diam convallis lorem luctus maximus eget at massa. Sed lobortis cursus augue. Curabitur at pretium nibh. Integer ipsum risus, sagittis id leo ut, lobortis mollis nulla. Sed vehicula nisi vel erat tempus, id posuere arcu iaculis. Vestibulum vehicula cursus elementum. Vestibulum quis mi quis nisl placerat porttitor non ac magna. Cras erat diam, tincidunt non cursus a, hendrerit et enim. Maecenas consequat tellus et nisl condimentum fermentum. Aliquam luctus egestas maximus. Nam dictum viverra venenatis.</p>
 							</div>
 						</div>
 
-						<div id="ca-4" class="collapsable collapsable-grouped">
-							<h4 class="ca-control"><a href="#ca-4" class="ca-ico">Grouped box 2</a></h4>
+						<div id="ca-4" class="collapsable collapsable-accordion">
+							<h4 class="ca-control"><a href="#ca-4" class="ca-ico">Accordion box 2</a></h4>
 							<div class="ca-box">
 								<p>Fusce nibh magna, accumsan eu orci vitae, convallis facilisis enim. Proin leo urna, tristique vel consectetur quis, gravida non ante. Aliquam erat volutpat. Vivamus varius sapien sapien, eget blandit quam molestie ut. Fusce rutrum id sem quis dapibus. Nullam vel urna ac erat eleifend dapibus. Phasellus cursus volutpat purus, in fermentum mauris vulputate sed. Phasellus sagittis sem ex, sit amet consectetur felis luctus eu. Vestibulum elementum libero eu libero pharetra lobortis. Curabitur dignissim sapien ut est varius, ac sollicitudin nunc euismod. Duis augue justo, accumsan eget sapien eu, aliquet lobortis lacus.</p>
 							</div>
 						</div>
 
-						<div id="ca-5" class="collapsable collapsable-grouped">
-							<h4 class="ca-control"><a href="#ca-5" class="ca-ico">Grouped box 3</a></h4>
+						<div id="ca-5" class="collapsable collapsable-accordion">
+							<h4 class="ca-control"><a href="#ca-5" class="ca-ico">Accordion box 3</a></h4>
 							<div class="ca-box">
 								<p>Quisque lobortis dolor erat, eu interdum leo elementum in. Pellentesque placerat, ligula viverra laoreet imperdiet, urna augue dignissim nulla, nec finibus nisi urna sed nisi. Praesent viverra ornare arcu at luctus. Maecenas non nunc sapien. Nullam eget purus ornare, ultricies sapien sit amet, ullamcorper lacus. Proin id convallis quam. Duis nec tincidunt orci. In leo turpis, finibus at ex vitae, finibus maximus dolor. Praesent viverra eget metus id auctor. Nam semper sed urna in tempus. In eu ornare quam. Suspendisse quis ornare nibh. </p>
 							</div>
@@ -158,11 +170,11 @@
 
 					<div class="col-source">
 						<h3>HTML</h3>
-						<p>Sample code is very similar to <a href="#basic-usage" class="ca-ext-link">basic example</a>, except the class on boxes is <code>collapsable-grouped</code>. See <a href="#" onclick="return !window.open('view-source:' + window.location.href, 'source', '')">source code</a> for details if needed.</p>
+						<p>Sample code is very similar to <a href="#basic-usage" class="ca-ext-link">basic example</a>, except the class on boxes is <code>collapsable-accordion</code>. See <a href="#" onclick="return !window.open('view-source:' + window.location.href, 'source', '')">source code</a> for details if needed.</p>
 
 						<h3>JavaScript</h3>
-						<div class="highlight highlight-source-js"><pre><span class="pl-en">$</span>(<span class="pl-s"><span class="pl-pds">'</span>.collapsable-grouped<span class="pl-pds">'</span></span>).<span class="pl-en">collapsable</span>({
-  grouped<span class="pl-k">:</span> <span class="pl-c1">true</span>,
+						<div class="highlight highlight-source-js"><pre><span class="pl-en">$</span>(<span class="pl-s"><span class="pl-pds">'</span>.collapsable-accordion<span class="pl-pds">'</span></span>).<span class="pl-en">collapsable</span>({
+  accordion<span class="pl-k">:</span> <span class="pl-c1">true</span>,
   fx<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>slide<span class="pl-pds">'</span></span>,
   fxDuration<span class="pl-k">:</span> <span class="pl-c1">300</span>
 });</pre></div>
@@ -178,7 +190,7 @@
 					<a class="ca-link" href="#always-at-least-one-visible-box">Always at least one visible box</a>
 				</h2>
 				<div class="example-content">
-					<p>With <code>collapsableAll</code> option is set to true, there will always be at least one expanded item &ndash; you won't be able to close all. You can combine this option with <code>grouped</code> from <a href="#opt-grouped">previous example</a>. That will result in exactly one expanded box all the time.</p>
+					<p>With <code>collapsableAll</code> option is set to true, there will always be at least one expanded item &ndash; you won't be able to close all. You can combine this option with <code>accordion</code> from <a href="#accordion" class="ca-ext-link">previous example</a>. That will result in exactly one expanded box all the time.</p>
 					<div class="col-preview">
 						<h3>Preview</h3>
 
@@ -206,7 +218,7 @@
 
 					<div class="col-source">
 						<h3>HTML</h3>
-						<p>Sample code is very similar to <a href="#basic-usage">basic example</a>, except the class on boxes is <code>collapsable-collapsableAll</code>. See <a href="#" onclick="return !window.open('view-source:' + window.location.href, 'source', '')">source code</a> for details if needed.</p>
+						<p>Sample code is very similar to <a href="#basic-usage" class="ca-ext-link">basic example</a>, except the class on boxes is <code>collapsable-collapsableAll</code>. See <a href="#" onclick="return !window.open('view-source:' + window.location.href, 'source', '')">source code</a> for details if needed.</p>
 
 						<h3>JavaScript</h3>
 						<div class="highlight highlight-source-js"><pre><span class="pl-en">$</span>(<span class="pl-s"><span class="pl-pds">'</span>.collapsable-collapsableAll<span class="pl-pds">'</span></span>).<span class="pl-en">collapsable</span>({
@@ -219,6 +231,8 @@
 					<div class="break"></div>
 				</div>
 			</div>
+
+			<p>More examples to come&hellip;</p>
 
 			<h1>
         <a id="options" class="anchor" href="#options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
@@ -287,7 +301,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td><a href="#grouped-boxes--accordion" class="ca-ext-link" title="See related example">grouped</a></td>
+						<td><a href="#accordion" class="ca-ext-link" title="See related example">accordion</a></td>
 						<td><code>false</code></td>
 						<td>Boolean</td>
 						<td>If set to <code>true</code>, only one box from set on which collapsable has been initialized could be opened at the same time.</td>
@@ -354,29 +368,141 @@
 				Events
 			</h1>
 
+			<h2>
+				<a id="events-triggered" class="anchor" href="#events-triggered" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+				Events triggered by plugin itself
+			</h2>
 			<p>
 				Since version 2.0.0, there is no possibility to pass callback functions via options. Instead, you may bind handlers
-				to events which are triggered by plugin. In table below, there are all events which may be triggered by plugin.
-				Most of the events store the original event which led to them, eg. when clicking the control element, you may access
-				to the click event.
+				to events which are triggered by plugin. All events are namespaced (<code>collapsable</code>). In table below,
+				there are all events which might be triggered by plugin. In all events, <code>this</code> refers to collapsable box
+				from initial set.
 			</p>
 
 			<table>
 				<thead>
 					<tr>
-						<th>Event (<code>e</code>)</th>
-						<th><code>e.originalEvent</code></th>
+						<th>Event name</th>
 						<th>Description</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
 						<td>expand.collapsable</td>
-						<td></td>
-						<td></td>
+						<td>Event triggered when box is about to expand. You can prevent it from expanding either using <code>e.preventDefault()</code> or by returning <code>false</code> (which also stops the event propagation).</td>
+					</tr>
+					<tr>
+						<td>expanded.collapsable</td>
+						<td>When box is fully expanded, this event is triggered. If you use jQuery function or custom function, it is triggered as a callback of those functions. Otherwise, it is called after <code>fxDuration</code> milliseconds.</td>
+					</tr>
+					<tr>
+						<td>collapse.collapsable</td>
+						<td>Analogical to <code>expand.collapsable</code>.</td>
+					</tr>
+					<tr>
+						<td>collapsed.collapsable</td>
+						<td>Analogical to <code>expanded.collapsable</code>.</td>
+					</tr>
+					<tr>
+						<td>destroy.collapsable</td>
+						<td>When the collapsable is destroyed, elements are returned to their state prior to initialization and on each of them, this event is triggered.</td>
 					</tr>
 				</tbody>
 			</table>
+
+			<h2>
+				<a id="events-original" class="anchor" href="#events-original" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+				Possible events passed in <code>e.originalEvent</code>
+			</h2>
+			<p>
+				Each event from above may contain property <code>originalEvent</code>. This allows you to distinguish actions that
+				led to expansion or collapse of the box, eg. if this expands by user click or any other way. Possible events stored
+				in are in table below. Additionally, when data has been passed to event (eg. by calling <code>.collapsable('collapseAll', data)</code>),
+				property <code>customData</code> is set in event.
+			</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Event name</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>init.collapsable</td>
+						<td>After initialization, <code>expand.collapsable</code> and <code>collapse.collapsable</code> are triggered on each item accordingly. Original event is set to this value.</td>
+					</tr>
+					<tr>
+						<td>expandAll.collapsable</td>
+						<td>When method <code>.collapsable('collapseAll')</code> is called on set of collapsable elements. Event is triggered only on items, that actually do expand.</td>
+					</tr>
+					<tr>
+						<td>collapseAll.collapsable</td>
+						<td>Analogical to <code>expandAll.collapsable</code>.</td>
+					</tr>
+					<tr>
+						<td>click.collapsable</td>
+						<td>Original event is set to this value when the user clicks on control element (if option <code>event === 'click'</code>) or if external link is clicked. Whole original jQuery event object is passed, so yo may use standard jQuery (and JS) functions for events.</td>
+					</tr>
+					<tr>
+						<td>event.collapsable</td>
+						<td>Where "event" refers to actual name of event which has been set in options, eg. <code>touchstart.collapsable</code>. Same as previous, it is jQuery event object.</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h1>
+				<a id="public-methods" class="anchor" href="#public-methods" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+				Public methods
+			</h1>
+
+			<p>
+				After initialization, you may use a few public methods defined on carousel. There are three public methods defined,
+				<code>expandAll</code>, <code>collapseAll</code> and <code>destroy</code> which will return the
+				DOM into state prior to initialization. All methods  might be called on any collapsable
+				item (in that case, the initial set is found), whole set or even multiple sets.
+			</p>
+			<div class="highlight highlight-source-js"><pre><span class="pl-c">// collapses all items from set $('.collapsable')</span>
+<span class="pl-en">$</span>(<span class="pl-s"><span class="pl-pds">'</span>.collapsable<span class="pl-pds">'</span></span>).<span class="pl-en">collapsable</span>(<span class="pl-s"><span class="pl-pds">'</span>expandAll<span class="pl-pds">'</span></span>);
+
+<span class="pl-c">// this will also expand all items from set, even though it has been called only on one item</span>
+<span class="pl-en">$</span>(<span class="pl-s"><span class="pl-pds">'</span>.collapsable<span class="pl-pds">'</span></span>).<span class="pl-en">get</span>(<span class="pl-c1">0</span>).<span class="pl-en">collapsable</span>(<span class="pl-s"><span class="pl-pds">'</span>expandAll<span class="pl-pds">'</span></span>);
+
+<span class="pl-c">// collapses all items from set $('.collapsable') and from $('.collapsable-2')</span>
+<span class="pl-en">$</span>(<span class="pl-s"><span class="pl-pds">'</span>.collapsable, .collapsable-2<span class="pl-pds">'</span></span>).<span class="pl-en">collapsable</span>(<span class="pl-s"><span class="pl-pds">'</span>collapseAll<span class="pl-pds">'</span></span>);
+
+<span class="pl-c">// destroys collapsable and returns DOM to state prior to initialization</span>
+<span class="pl-en">$</span>(<span class="pl-s"><span class="pl-pds">'</span>.collapsable<span class="pl-pds">'</span></span>).<span class="pl-en">collapsable</span>(<span class="pl-s"><span class="pl-pds">'</span>destroy<span class="pl-pds">'</span></span>);</pre></div>
+
+
+			<p>
+				There is a data set on each item containing JS Object. You may retrieve it and then use some other functions defined
+				on objects itself. See example below.
+			</p>
+			<div class="highlight highlight-source-js"><pre><span class="pl-c">// get the instance of CollapsableItem object</span>
+<span class="pl-k">var</span> item <span class="pl-k">=</span> <span class="pl-en">$</span>(<span class="pl-s"><span class="pl-pds">'</span>.collapsable<span class="pl-pds">'</span></span>).<span class="pl-en">eq</span>(<span class="pl-c1">0</span>).<span class="pl-c1">data</span>(<span class="pl-s"><span class="pl-pds">'</span>collapsable<span class="pl-pds">'</span></span>);
+
+<span class="pl-c">/**</span>
+<span class="pl-c"> * Expand this item, arguments of function call are</span>
+<span class="pl-c"> * <span class="pl-k">@param</span> event - event passed to handler of triggered events (expand.collapsable, ...)</span>
+<span class="pl-c"> * <span class="pl-k">@param</span> data  - data passed to event, accessible in event.customData</span>
+<span class="pl-c"> * <span class="pl-k">@param</span> force - boolean for expanding item regardless of event.preventDefault call in expand.collapsable handler</span>
+<span class="pl-c"> * <span class="pl-k">@returns</span> Boolean - if the item has or has not been expanded</span>
+<span class="pl-c"> */</span>
+<span class="pl-smi">item</span>.<span class="pl-en">expand</span>(<span class="pl-c1">event</span>, data, force);
+
+<span class="pl-c">// Collapse the item, analogical to above</span>
+<span class="pl-smi">item</span>.<span class="pl-en">collapse</span>(<span class="pl-c1">event</span>, data, force)
+
+<span class="pl-c">// instance of Collapsable object, contains array items, where there are all items as CollapsableItem</span>
+<span class="pl-k">var</span> set <span class="pl-k">=</span> <span class="pl-smi">item</span>.<span class="pl-c1">parent</span>;
+
+<span class="pl-c">// Expands all items of set, data are passed expand.collapsable handler in e.customData</span>
+<span class="pl-smi">set</span>.<span class="pl-en">expandAll</span>(data);
+
+<span class="pl-c">// Analogical, but collapses all items</span>
+<span class="pl-smi">set</span>.<span class="pl-en">collapseAll</span>(data);
+</pre></div>
 
 
 			<h1>
@@ -385,13 +511,23 @@
 			</h1>
 
 			<h2>
+				<a id="202" class="anchor" href="#202" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+				2.0.2
+			</h2>
+			<ul>
+				<li>renamed property <del><code>originalEvent</code></del> to <code>collapsableEvent</code>, so <code>preventDefault</code> called on <code>expand.collapsable</code>/<code>collapse.collapsable</code> event doesn't prevent that custom event as well</li>
+			</ul>
+
+			<h2>
 				<a id="201" class="anchor" href="#201" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
 				2.0.1
 			</h2>
 
 			<ul>
+				<li>renamed option <del><code>grouped</code></del> to more recognizable <code>accordion</code></li>
 				<li>changed default <code>fx</code> value to <code>null</code> for no effect used</li>
 				<li>changed order of executing <code>fx</code> function and class assigning so it doesn't interfere with jQuery effects</li>
+				<li>default value of <code>extLinks.selector</code> to empty string <code>''</code></li>
 				<li>move class name option for active external links into <code>classNames</code></li>
 				<li>destroy function now actually works properly :) some optimizations were done to destroy method apart from making it work</li>
 				<li>when destroy is called, aria attributes are removed as well - <a href="https://github.com/zipper/jquery.collapsable/issues/6">#6</a></li>

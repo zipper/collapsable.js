@@ -1,12 +1,12 @@
 /**
- * jQuery Collapsable - jQuery plugin for collapsable boxes
+ * jQuery Collapsable - jQuery plugin for collapsable boxes 
  * http://zipper.github.io/jquery.collapsable/
  *
  * @author Radek Šerý <radek.sery@gmail.com>
  * @copyright Copyright (c) 2014-2016 Radek Šerý
  * @license MIT
  *
- * @version 2.0.1
+ * @version 2.0.2
  */
 ;(function($) {
 

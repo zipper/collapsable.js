@@ -22,6 +22,7 @@ a:hover {
 
 .octicon {
 	vertical-align:middle;
+	margin-bottom:2px;
 }
 
 .break {
@@ -355,6 +356,7 @@ a:hover {
 .main-content table {
 	display:block;
 	width:100%;
+	margin-bottom:2rem;
 	overflow:auto;
 	word-break:normal;
 	word-break:keep-all;
