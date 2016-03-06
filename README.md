@@ -5,8 +5,11 @@ Please see the plugin site http://zipper.github.io/jquery.collapsable/
 
 ## Changelog
 
+### 2.0.2
+- renamed property ~~`originalEvent`~~ to `collapsableEvent`, so `preventDefault` called on `expand.collapsable`/`collapse.collapsable` event doesn't prevent that custom event as well
+
 ### 2.0.1
-- renamed option `grouped` to more recognizable ``accordion`
+- renamed option ~~`grouped`~~ to more recognizable `accordion`
 - changed default `fx` value to `null` for no effect used
 - changed order of executing `fx` function and class assigning so it doesn't interfere with jQuery effects
 - default value of `extLinks.selector` to empty string `''`

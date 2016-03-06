@@ -3,7 +3,7 @@
  */
 ;(function($) {
 
-	// @feature: díky předávání originalEvent do expand.collapsable (atd.) je možné použít e.originalEvent.preventDefault() místo defaults.preventDefault! cool, ne?!
+	// @feature: díky předávání collapsableEvent do expand.collapsable (atd.) je možné použít e.collapsableEvent.preventDefault() místo defaults.preventDefault! cool, ne?!
 
 	/**
 	 * Collapsable defaults
@@ -13,7 +13,7 @@
 		control: '.ca-control', // CSS selector for control element
 		box: '.ca-box',         // CSS selector for hideable element (box)
 		event: 'click',         // event triggering the expand/collapse
-		preventDefault: true,   // whether prevenDefault should be called when specified event occurs on control; even if false, e.originalEvent.preventDefault() may be used inside collapsable event handlers
+		preventDefault: true,   // whether prevenDefault should be called when specified event occurs on control; even if false, e.collapsableEvent.preventDefault() may be used inside collapsable event handlers
 
 		fx: null,               // effect for expanding/collapsing, [ false | toggle | slide | fade | {Object} ]
 		fxDuration: 0,          // duration of the effect, affects delay between `expand.collapsable`(`collapse.collapsable`) and `expanded.collapsable` (`collapsed.collapsable`) evetns are triggered; default value is 500 when fx set to slide
@@ -455,9 +455,9 @@
 
 		this.$controlLink = this.$control.find('.ca-link').addBack('.ca-link');
 
-		// originalEvent contains arguments passed when trigger is called, used for passing event that triggered opening (eg. extLink click)
-		this.$controlLink.on(opts.event + '.collapsable', function(event, originalEvent) {
-			var passEvent = originalEvent ? originalEvent : event;
+		// collapsableEvent contains arguments passed when trigger is called, used for passing event that triggered opening (eg. extLink click)
+		this.$controlLink.on(opts.event + '.collapsable', function(event, collapsableEvent) {
+			var passEvent = collapsableEvent ? collapsableEvent : event;
 			if (opts.preventDefault) {
 				event.preventDefault();
 			}
@@ -480,10 +480,10 @@
 	 * Handling common parts of expanding and collapsing
 	 * @param {String} action - Either `expand` or `collapse`
 	 * @param {Object} data - Data passed to triggered event
-	 * @param {Event} originalEvent - Event to be passed to event handlers
+	 * @param {Event} collapsableEvent - Event to be passed to event handlers
 	 * @returns {boolean}
 	 */
-	function handleExpandCollapse(action, originalEvent, data) {
+	function handleExpandCollapse(action, collapsableEvent, data) {
 		var opts = this.parent.opts;
 		var that = this;
 		var trigger = 'expanded';
@@ -497,7 +497,7 @@
 			removeClass = opts.classNames.expanded;
 		}
 
-		var event = $.Event(trigger + '.collapsable', { customData: data, originalEvent: originalEvent });
+		var event = $.Event(trigger + '.collapsable', { customData: data, collapsableEvent: collapsableEvent });
 
 		this.isExpanded = action === 'expand';
 
@@ -536,62 +536,62 @@
 
 	/**
 	 * Expands single CollapsableItem; could be prevented by `preventDefault` called on `expand.collapsable` event
-	 * @param {Object} originalEvent  - Event passed to triggered event
+	 * @param {Object} collapsableEvent  - Event passed to triggered event
 	 * @param {Object} data - Data passed to triggered event
 	 * @param {Boolean} force - Forcing CollapsableItem to expand regardless on onExpand return value, should be used only on initilization (force open default expanded item when collapsableAll === false)
 	 * @returns {Boolean}     - Returns if CollapsableItem has been expanded or not
 	 */
-	CollapsableItem.prototype.expand = function(originalEvent, data, force) {
+	CollapsableItem.prototype.expand = function(collapsableEvent, data, force) {
 		var opts = this.parent.opts;
 		var expandedItem = this.parent.getExpanded(); // accordion -> max one expanded item
 
 		this.parent.promiseOpen = true; // allows us to collapse expanded item even if there might be collapseAll === false option
 		if (opts.accordion) {
 			// before expanding, we have to collapse previously opened item, if accordion element hasn't collapsed, we can't continue
-			if (expandedItem.length && this.parent.items[expandedItem[0]].collapse(originalEvent, data, force) === false) {
+			if (expandedItem.length && this.parent.items[expandedItem[0]].collapse(collapsableEvent, data, force) === false) {
 				this.parent.promiseOpen = false;
 				return false;
 			}
 		}
 		this.parent.promiseOpen = false;
 
-		var event = $.Event('expand.collapsable', { customData: data, originalEvent: originalEvent });
+		var event = $.Event('expand.collapsable', { customData: data, collapsableEvent: collapsableEvent });
 		this.$collapsable.trigger(event);
 
 		if (event.isDefaultPrevented() && ! force) {
 			// collapsableAll === false && accordion === true -> if the box has not opened, we must make sure something is opened, therefore we force-open previously opened box (opts.accordion is true means we tried to collapse something), simulating it has never closed in first place
 			if (! opts.collapsableAll && opts.accordion) {
-				this.parent.items[expandedItem[0]].expand(originalEvent, data, true);
+				this.parent.items[expandedItem[0]].expand(collapsableEvent, data, true);
 			}
 
 			return false;
 		}
 
-		return handleExpandCollapse.call(this, 'expand', originalEvent)
+		return handleExpandCollapse.call(this, 'expand', collapsableEvent)
 	};
 
 	/**
 	 * Collapses single CollapsableItem; could be prevented by `preventDefault` called on `collapse.collapsable` event
-	 * @param {Object} originalEvent  - Event passed to triggered event
+	 * @param {Object} collapsableEvent  - Event passed to triggered event
 	 * @param {Object} data - Data passed to triggered event
 	 * @param {Boolean} force - Forcing CollapsableItem to collapse regardless on onCollapse return value
 	 * @returns {Boolean}     - Returns if CollapsableItem has been collapsed or not
 	 */
-	CollapsableItem.prototype.collapse = function(originalEvent, data, force) {
+	CollapsableItem.prototype.collapse = function(collapsableEvent, data, force) {
 		var opts = this.parent.opts;
 		// if we can't collapse all, we are not promised to open something and there is only one opened box, then we can't continue
 		if (! opts.collapsableAll && ! this.parent.promiseOpen && this.parent.getExpanded().length < 2) {
 			return false;
 		}
 
-		var event = $.Event('collapse.collapsable', { customData: data, originalEvent: originalEvent });
+		var event = $.Event('collapse.collapsable', { customData: data, collapsableEvent: collapsableEvent });
 		this.$collapsable.trigger(event);
 
 		if (event.isDefaultPrevented() && !force) {
 			return false;
 		}
 
-		return handleExpandCollapse.call(this, 'collapse', originalEvent);
+		return handleExpandCollapse.call(this, 'collapse', collapsableEvent);
 	};
 
 
