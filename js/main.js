@@ -18,7 +18,7 @@ $(function () {
 			}
 		})
 		.on('collapse.collapsable', function(e) {
-			if ($(e.target).is('.example') && e.collapsableEvent && $(e.collapsableEvent.target).hasClass('ca-ext-link')) {
+			if ($(e.target).is('.example') && e.collapsableEvent && $(e.collapsableEvent.currentTarget).is('.anchor, .ca-ext-link')) {
 				e.preventDefault();
 			}
 		});
