@@ -29,7 +29,7 @@
 			</h1>
 			<ul>
 				<li>Lightweight (~2.1kB minified &amp; gzipped version), yet robust (lot of options)</li>
-				<li>Cross browser compatible, including mobile browsers, tested in IE8+, Microsoft Edge, Firefox, Chrome, Safari, Opera, &hellip;</li>
+				<li>Cross browser compatible, including mobile browsers, tested in IE8+ (although, for making it work in IE8, you have to include <a href="./js/ie8-compat.js">this small file</a>), Microsoft Edge, Firefox, Chrome, Safari, Opera, &hellip;</li>
 				<li>jQuery 3 ready</li>
 				<li><a href="https://www.w3.org/WAI/intro/aria">WAI ARIA <span aria-hidden="true" class="octicon octicon-link-external"></span></a> compliant</li>
 			</ul>
@@ -45,7 +45,7 @@
 {
     <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>My Project Name<span class="pl-pds">"</span></span>,
     <span class="pl-s"><span class="pl-pds">"</span>dependencies<span class="pl-pds">"</span></span><span class="pl-k">:</span> {
-        <span class="pl-s"><span class="pl-pds">"</span>jquery.collapsable<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>~2.0.2<span class="pl-pds">"</span></span>
+        <span class="pl-s"><span class="pl-pds">"</span>jquery.collapsable<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>~2.0.*<span class="pl-pds">"</span></span>
     }
 }</pre></div>
 
@@ -282,7 +282,7 @@
 							Effect used for expanding / collapsing. When <code>null</code> is passed, only class name is changed. Alternatively, object containing properties <code>expand</code> and <code>collapse</code> may be passed. In this case, values will be used as functions for expanding and collapsing. These functions will be called on jQuery object (on box element). Example:
 <div class="highlight highlight-source-js"><pre>{
   expand<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>slideDown<span class="pl-pds">'</span></span>,
-  collapse<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>fadeIn<span class="pl-pds">'</span></span>
+  collapse<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>fadeOut<span class="pl-pds">'</span></span>
 }</pre></div>
 
 						</td>
@@ -297,7 +297,7 @@
 						<td>Integer</td>
 						<td>
 							Duration of the effect configured using <code>fx</code> parameter. When jQuery functions are used, it is duration in milliseconds, when custom functions are used, this parameter is passed into them.<br><br>
-							This value also defines the delay between events <code>expand.collapsable</code> and  <code>expanded.collapsable</code> (<code>collapse.collapsable</code> and  <code>collapsed.collapsable</code> respectively) are triggered.<br><br>
+							This value also defines the delay between events <code>expand.collapsable</code> and <code>expanded.collapsable</code> (<code>collapse.collapsable</code> and  <code>collapsed.collapsable</code> respectively) are triggered.<br><br>
 							When <code>fx</code> is set to <code>slide</code> or <code>fade</code>, the default value is 500.
 						</td>
 					</tr>
@@ -512,11 +512,20 @@
 			</h1>
 
 			<h2>
+				<a id="203" class="anchor" href="#203" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+				2.0.3
+			</h2>
+			<ul>
+				<li>fixed JS error when called on empty jQuery object with <code>collapsableAll: false</code> set - fixes <a href="https://github.com/zipper/jquery.collapsable/issues/7">#7</a></li>
+				<li>items are properly collapsed on initialization when combination of <code>collapsableAll</code> and <code>accordion</code> is used - fixes <a href="https://github.com/zipper/jquery.collapsable/issues/8">#8</a></li>
+			</ul>
+
+			<h2>
 				<a id="202" class="anchor" href="#202" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
 				2.0.2
 			</h2>
 			<ul>
-				<li>renamed property <del><code>originalEvent</code></del> to <code>collapsableEvent</code>, so <code>preventDefault</code> called on <code>expand.collapsable</code>/<code>collapse.collapsable</code> event doesn't prevent that custom event as well</li>
+				<li>renamed property <del><code>originalEvent</code></del> to <code>collapsableEvent</code>, so <code>preventDefault</code> called on <code>expand.collapsable</code> or <code>collapse.collapsable</code> event doesn't prevent that custom event as well</li>
 			</ul>
 
 			<h2>

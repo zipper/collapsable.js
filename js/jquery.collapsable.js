@@ -6,11 +6,9 @@
  * @copyright Copyright (c) 2014-2016 Radek Šerý
  * @license MIT
  *
- * @version 2.0.2
+ * @version 2.0.3
  */
 ;(function($) {
-
-	// @feature: díky předávání collapsableEvent do expand.collapsable (atd.) je možné použít e.collapsableEvent.preventDefault() místo defaults.preventDefault! cool, ne?!
 
 	/**
 	 * Collapsable defaults
@@ -264,6 +262,10 @@
 	 * @constructor
 	 */
 	var Collapsable = function ($boxSet, options) {
+		if ($boxSet.length === 0) {
+			return null;
+		}
+
 		this.opts = $.extend(true, {}, $.fn.collapsable.defaults, options);
 		this.items = [];
 
@@ -452,8 +454,12 @@
 		this.$control = this.$collapsable.find(parent.opts.control);
 		this.$box     = this.$collapsable.find(parent.opts.box);
 
-		if (this.$control.length == 0 || this.$box.length == 0)
-			return;
+		if (this.$control.length == 0 || this.$box.length == 0) {
+			return null;
+		}
+
+		// on initialization, we assume the item is expanded until it's actually collapsed
+		this.isExpanded = true;
 
 		var that = this;
 		var opts = this.parent.opts; // shortcut
