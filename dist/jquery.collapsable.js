@@ -146,7 +146,7 @@
 		}));
 
 		// search for #hash in url
-		if (i !== -1) {
+		if (i !== -1 && fragment.length > (i + 1)) {
 			fragment = fragment.substring(i + 1);
 			defaultExpandedFromUrl = $items.index($('#' + fragment));
 
