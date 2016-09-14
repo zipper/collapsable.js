@@ -5,6 +5,9 @@ Please see the plugin site http://zipper.github.io/jquery.collapsable/
 
 ## Changelog
 
+### 2.0.4
+- fixes #10 (empty hash `#` in url causes JS error in jQuery 3 when used as selector `$('#')`)
+
 ### 2.0.3
 - fixed JS error when called on empty jQuery object with `collapsableAll: false` set - fixes #7
 - items are properly collapsed on initialization when combination of `collapsableAll` and `accordion` is used - fixes #8
