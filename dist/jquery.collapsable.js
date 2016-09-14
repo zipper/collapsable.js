@@ -6,7 +6,7 @@
  * @copyright Copyright (c) 2014-2016 Radek Šerý
  * @license MIT
  *
- * @version 2.0.3
+ * @version 2.0.4
  */
 ;(function($) {
 
