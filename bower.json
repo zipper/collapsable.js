@@ -7,7 +7,7 @@
 	"license": "MIT",
 	"keywords": ["jquery", "jquery-plugin", "collapsable", "jquery-collapsable"],
 	"dependencies": {
-		"jquery": ">=1.7"
+		"jquery": ">=1.9"
 	},
 	"ignore": [
 		"**/.*",
