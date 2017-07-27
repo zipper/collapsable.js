@@ -3,10 +3,10 @@
  * http://zipper.github.io/jquery.collapsable/
  *
  * @author Radek Šerý <radek.sery@gmail.com>
- * @copyright Copyright (c) 2014-2016 Radek Šerý
+ * @copyright Copyright (c) 2014-2017 Radek Šerý
  * @license MIT
  *
- * @version 2.0.4
+ * @version 2.0.5
  */
 ;(function($) {
 
@@ -379,9 +379,12 @@
 				.removeAttr('aria-expanded');
 
 			// revert box element
-			var style = item.$box.data('ca-pre-init-style') || '';
 			item.$box
-				.attr('style', style)
+				.each(function() {
+					var style = $(this).data('ca-pre-init-style') || '';
+
+					$(this).attr('style', style);
+				})
 				.removeData('ca-pre-init-style')
 				.removeAttr('aria-hidden');
 
@@ -411,10 +414,17 @@
 			collapsableItem.$collapsable.attr('id', this.id);
 		}
 
-		var boxId = collapsableItem.$box.attr('id') || collapsableItem.id + '-ca-box';
-		collapsableItem.$box
-			.attr('id', boxId)
-			.data('ca-pre-init-style', collapsableItem.$box.attr('style'));
+		var ariaControlsAttr = [];
+		collapsableItem.$box.each(function(i) {
+			var $boxItem = $(this);
+			var boxItemId = $boxItem.attr('id') || collapsableItem.id + '-ca-box-' + i;
+
+			$boxItem
+				.attr('id', boxItemId)
+				.data('ca-pre-init-style', $(this).attr('style'));
+
+			ariaControlsAttr.push(boxItemId);
+		});
 
 		collapsableItem.$control.each(function() {
 			var $el = $(this);
@@ -434,7 +444,7 @@
 			}
 
 			$a.addClass('ca-link');
-			$a.attr('aria-controls', boxId);
+			$a.attr('aria-controls', ariaControlsAttr.join(' '));
 		});
 
 	}
@@ -454,7 +464,7 @@
 		this.$control = this.$collapsable.find(parent.opts.control);
 		this.$box     = this.$collapsable.find(parent.opts.box);
 
-		if (this.$control.length == 0 || this.$box.length == 0) {
+		if (this.$control.length === 0 || this.$box.length === 0) {
 			return null;
 		}
 
