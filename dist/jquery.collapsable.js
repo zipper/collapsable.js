@@ -6,7 +6,7 @@
  * @copyright Copyright (c) 2014-2017 Radek Šerý
  * @license MIT
  *
- * @version 2.0.5
+ * @version 2.0.6
  */
 ;(function($) {
 
@@ -162,7 +162,7 @@
 
 		// max 1 expanded item
 		if (this.opts.accordion) {
-			defaultExpanded = $items.index($('.' + this.opts.classNames.defaultExpanded));
+			defaultExpanded = $items.index( $items.filter('.' + this.opts.classNames.defaultExpanded) );
 
 			// max 1, we can return now
 			if (defaultExpanded !== -1) {

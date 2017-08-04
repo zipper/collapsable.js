@@ -155,7 +155,7 @@
 
 		// max 1 expanded item
 		if (this.opts.accordion) {
-			defaultExpanded = $items.index($('.' + this.opts.classNames.defaultExpanded));
+			defaultExpanded = $items.index( $items.filter('.' + this.opts.classNames.defaultExpanded) );
 
 			// max 1, we can return now
 			if (defaultExpanded !== -1) {
