@@ -2,7 +2,7 @@
 	"name": "jquery.collapsable",
 	"title": "jQuery Collapsable",
 	"description": "jQuery plugin for collapsable boxes",
-	"version": "2.0.6",
+	"version": "2.0.7",
 	"author": {
 		"name": "Radek Šerý",
 		"email": "radek.sery@gmail.com"

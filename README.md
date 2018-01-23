@@ -5,6 +5,15 @@ Please see the plugin site http://zipper.github.io/jquery.collapsable/
 
 ## Changelog
 
+### 2.0.7
+- when collapsable control anchor is present in HTML and its `href` attribute is `#`, then it is replaced with collapsable box id
+
+### 2.0.6
+- fixup: default expanded box could have been ignored under certain circumstances
+
+### 2.0.5
+- there could be more than one box per collapsable element, id's are suffixed with index of the box and aria-controls attribute is changed appropriately
+
 ### 2.0.4
 - fixes #10 (empty hash `#` in url causes JS error in jQuery 3 when used as selector `$('#')`)
 

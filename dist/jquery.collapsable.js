@@ -3,10 +3,10 @@
  * http://zipper.github.io/jquery.collapsable/
  *
  * @author Radek Šerý <radek.sery@gmail.com>
- * @copyright Copyright (c) 2014-2017 Radek Šerý
+ * @copyright Copyright (c) 2014-2018 Radek Šerý
  * @license MIT
  *
- * @version 2.0.6
+ * @version 2.0.7
  */
 ;(function($) {
 
@@ -445,8 +445,11 @@
 
 			$a.addClass('ca-link');
 			$a.attr('aria-controls', ariaControlsAttr.join(' '));
-		});
 
+			if ($a.attr('href') === '#') {
+				$a.attr('href', '#' + collapsableItem.id);
+			}
+		});
 	}
 
 

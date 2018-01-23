@@ -438,8 +438,11 @@
 
 			$a.addClass('ca-link');
 			$a.attr('aria-controls', ariaControlsAttr.join(' '));
-		});
 
+			if ($a.attr('href') === '#') {
+				$a.attr('href', '#' + collapsableItem.id);
+			}
+		});
 	}
 
 
