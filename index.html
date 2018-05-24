@@ -272,7 +272,7 @@
 						<td>preventDefault</td>
 						<td><code>true</code></td>
 						<td>Boolean</td>
-						<td>Whether <code>e.preventDefault()</code> is called on event binded on control element. This prevents browser from scrolling to anchor or navigating to link address. Alternatively, you can call <code>e.originalEvent.preventDefault()</code> inside expand.collapsable (<code>collapse.collapsable</code>) handlers instead.</td>
+						<td>Whether <code>e.preventDefault()</code> is called on event binded on control element. This prevents browser from scrolling to anchor or navigating to link address. Alternatively, you can call <code>e.collapsableEvent.preventDefault()</code> inside expand.collapsable (<code>collapse.collapsable</code>) handlers instead.</td>
 					</tr>
 					<tr>
 						<td rowspan="2">fx</td>
@@ -413,10 +413,10 @@
 
 			<h2>
 				<a id="events-original" class="anchor" href="#events-original" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
-				Possible events passed in <code>e.originalEvent</code>
+				Possible events passed in <code>e.collapsableEvent</code>
 			</h2>
 			<p>
-				Each event from above may contain property <code>originalEvent</code>. This allows you to distinguish actions that
+				Each event from above may contain property <code>collapsableEvent</code>. This allows you to distinguish actions that
 				led to expansion or collapse of the box, eg. if this expands by user click or any other way. Possible events stored
 				in are in table below. Additionally, when data has been passed to event (eg. by calling <code>.collapsable('collapseAll', data)</code>),
 				property <code>customData</code> is set in event.
