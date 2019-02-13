@@ -511,7 +511,47 @@
 				Changelog
 			</h1>
 
-			<h2>
+		    <h2>
+			    <a id="208" class="anchor" href="#208" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+			    2.0.8
+		    </h2>
+	        <ul>
+		        <li>added control if hash in url is valid selector, eg. <code>#_=_</code> is would cause jQuery to throw an error</li>
+	        </ul>
+
+		    <h2>
+			    <a id="207" class="anchor" href="#207" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+			    2.0.7
+		    </h2>
+	        <ul>
+		        <li>when collapsable control anchor is present in HTML and its href attribute is <code>#</code>, then it is replaced with collapsable box id</li>
+	        </ul>
+
+		    <h2>
+			    <a id="206" class="anchor" href="#206" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+			    2.0.6
+		    </h2>
+	        <ul>
+		        <li>fixup: default expanded box could have been ignored under certain circumstances</li>
+	        </ul>
+
+		    <h2>
+			    <a id="205" class="anchor" href="#205" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+			    2.0.5
+		    </h2>
+	        <ul>
+		        <li>there could be more than one box per collapsable element, id's are suffixed with index of the box and <code>aria-controls</code> attribute is changed appropriately</li>
+	        </ul>
+
+		    <h2>
+			    <a id="204" class="anchor" href="#204" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+			    2.0.4
+		    </h2>
+	        <ul>
+		        <li>fixes <a href="https://github.com/zipper/jquery.collapsable/issues/10">#10</a> (empty hash <code>#</code> in url causes JS error in jQuery 3 when used as selector <code>$('#')</code>)</li>
+	        </ul>
+
+	        <h2>
 				<a id="203" class="anchor" href="#203" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
 				2.0.3
 			</h2>
