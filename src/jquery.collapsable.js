@@ -74,6 +74,24 @@
 
 
 	/**
+	 * Checks if string is a valid jQuery selector
+	 * @param {String} selector    string to be tested
+	 * @returns {boolean}
+	 */
+	function isValidSelector(selector) {
+		if (typeof(selector) !== 'string') {
+			return false;
+		}
+		try {
+			var $element = $(selector);
+		} catch(error) {
+			return false;
+		}
+		return true;
+	}
+
+
+	/**
 	 * Handles public method called on jQuery object using adapter
 	 * @param {String} action - collapseAll|expandAll|destroy
 	 * @param {Object} data - Data passed by user
@@ -139,16 +157,19 @@
 		}));
 
 		// search for #hash in url
-		if (i !== -1 && fragment.length > (i + 1)) {
-			fragment = fragment.substring(i + 1);
-			defaultExpandedFromUrl = $items.index($('#' + fragment));
+		if (i !== -1 && fragment.length > (i)) {
+			fragment = fragment.substring(i);
 
-			if (defaultExpandedFromUrl !== -1) {
-				this.items[defaultExpandedFromUrl].defaultExpanded = true;
+			if (isValidSelector(fragment)) {
+				defaultExpandedFromUrl = $items.index($(fragment));
 
-				// max 1, we can return now
-				if (this.opts.accordion) {
-					return;
+				if (defaultExpandedFromUrl !== -1) {
+					this.items[defaultExpandedFromUrl].defaultExpanded = true;
+
+					// max 1, we can return now
+					if (this.opts.accordion) {
+						return;
+					}
 				}
 			}
 		}

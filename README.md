@@ -5,6 +5,9 @@ Please see the plugin site http://zipper.github.io/jquery.collapsable/
 
 ## Changelog
 
+### 2.0.8
+- added control if hash in url is valid selector, eg. `#_=_` is would cause jQuery to throw an error 
+
 ### 2.0.7
 - when collapsable control anchor is present in HTML and its `href` attribute is `#`, then it is replaced with collapsable box id
 
