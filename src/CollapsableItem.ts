@@ -23,7 +23,7 @@ export class CollapsableItem {
 	private readonly collapsable: Collapsable
 	private readonly item: HTMLCollapsableItem
 
-	private className = 'js-collapsable'
+	private readonly className = 'js-collapsable'
 	public isExpanded = true
 
 	public readonly id

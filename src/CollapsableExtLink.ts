@@ -1,5 +1,5 @@
 import { CollapsableItem } from './CollapsableItem'
-import { Collapsable, CollapsableEvent } from './Collapsable'
+import { Collapsable } from './Collapsable'
 
 export class CollapsableExtLink {
 	private readonly collapsable: Collapsable
@@ -37,15 +37,10 @@ export class CollapsableExtLink {
 				event.preventDefault()
 			}
 
-			const dispatchEvent: CollapsableEvent = new CustomEvent(options.event, {
-				bubbles: true,
-				detail: { collapsableEvent: event }
-			})
-
 			if (this.collapsableItem.isExpanded) {
-				this.collapsableItem.collapse(dispatchEvent, null, false)
+				this.collapsableItem.collapse(event, null, false)
 			} else {
-				this.collapsableItem.expand(dispatchEvent, null, false)
+				this.collapsableItem.expand(event, null, false)
 			}
 		}
 
