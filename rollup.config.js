@@ -66,7 +66,7 @@ export default [
 			...output,
 			file: pkg.unpkg,
 			format: 'umd',
-			name: 'collapsable.js',
+			name: 'Collapsable',
 		},
 		external: Object.keys(pkg.peerDependencies || {}),
 		plugins: [
@@ -84,7 +84,7 @@ export default [
 			...output,
 			file: pkg.main,
 			format: 'umd',
-			name: 'collapsable.js',
+			name: 'Collapsable',
 		},
 		external: Object.keys(pkg.peerDependencies || {}),
 		plugins: [

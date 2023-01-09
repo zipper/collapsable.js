@@ -23,7 +23,6 @@ export class CollapsableItem {
 	private readonly collapsable: Collapsable
 	private readonly item: HTMLCollapsableItem
 
-	private readonly className = 'js-collapsable'
 	public isExpanded = true
 
 	public readonly id
@@ -58,6 +57,8 @@ export class CollapsableItem {
 	}
 
 	private prepareDOM() {
+		const { options } = this.collapsable
+
 		if (!this.item.id) {
 			this.item.id = this.id
 		}
@@ -74,16 +75,11 @@ export class CollapsableItem {
 		this.controlElements.forEach((control) => {
 			let link
 
-			// a.ca-control -> add class .ca-link
 			if (control.tagName.toLowerCase() === 'a') {
 				link = control
-			}
-			// .ca-control a -> add class .ca-link
-			else if ((link = control.querySelector('a'))) {
+			} else if ((link = control.querySelector('a'))) {
 				// noop
-			}
-			// no anchor found, create custom
-			else {
+			} else {
 				link = document.createElement('a')
 				link.dataset.caCreated = 'true'
 				link.href = '#'
@@ -91,7 +87,7 @@ export class CollapsableItem {
 				control.replaceWith(link)
 			}
 
-			link.classList.add(`${this.className}__link`)
+			link.classList.add(options.classNames.link)
 			link.setAttribute('aria-controls', ariaControlsAttr.join(' '))
 
 			if (link.getAttribute('href') === '#') {
@@ -180,11 +176,13 @@ export class CollapsableItem {
 
 	public expand(collapsableEvent: any, data: any, force: boolean): boolean {
 		const { options } = this.collapsable
-		const expandedItem = this.collapsable.getExpanded() // accordion -> max one expanded item
+		const expandedItem = this.collapsable.getExpanded()
 
-		this.collapsable.promiseOpen = true // allows us to collapse expanded item even if there might be collapseAll === false option
+		// This allows us to collapse expanded item even if there might be collapseAll === false option
+		this.collapsable.promiseOpen = true
 
-		// if accordion, we have to collapse previously opened item before expanding; if accordion element hasn't collapsed, we can't continue
+		// If accordion, we have to collapse previously opened item before expanding; if accordion element hasn't
+		// collapsed, we can't continue
 		if (options.accordion && expandedItem.length && !expandedItem[0].collapse(collapsableEvent, data, force)) {
 			this.collapsable.promiseOpen = false
 			return false
@@ -202,7 +200,9 @@ export class CollapsableItem {
 		this.item.dispatchEvent(event)
 
 		if (event.defaultPrevented && !force) {
-			// collapsableAll === false && accordion === true -> if the box has not opened, we must make sure something is opened, therefore we force-open previously opened box (options.accordion is true means we tried to collapse something), simulating it has never closed in first place
+			// collapsableAll === false && accordion === true -> if the box has not opened, we must make sure something
+			// remained open, therefore we force-open previously opened box (options.accordion === true means we tried
+			// to collapse something), simulating it has never closed in first place
 			if (!options.collapsableAll && options.accordion) {
 				expandedItem[0].expand(collapsableEvent, data, true)
 			}
@@ -216,7 +216,8 @@ export class CollapsableItem {
 	public collapse(collapsableEvent: any, data: any, force: boolean): boolean {
 		const { options } = this.collapsable
 
-		// if we can't collapse all, we are not promised to open something and there is only one opened box, then we can't continue
+		// If we can't collapse all & we are not promised to open something & there is only one opened box, we can't
+		// continue
 		if (!options.collapsableAll && !this.collapsable.promiseOpen && this.collapsable.getExpanded().length < 2) {
 			return false
 		}
@@ -244,7 +245,6 @@ export class CollapsableItem {
 	public destroy(): void {
 		const { options } = this.collapsable
 
-		// remove classes and event handlers from main element
 		this.item.classList.remove(options.classNames.collapsed)
 		this.item.classList.remove(options.classNames.expanded)
 		delete this.item.collapsableItem
@@ -257,7 +257,7 @@ export class CollapsableItem {
 			if (link.dataset.caCreated && link.parentElement) {
 				link.parentElement.innerHTML = link.innerHTML
 			} else {
-				link.classList.remove(`${this.className}__link`)
+				link.classList.remove(options.classNames.link)
 				link.removeAttribute('aria-controls')
 				link.removeAttribute('aria-expanded')
 			}

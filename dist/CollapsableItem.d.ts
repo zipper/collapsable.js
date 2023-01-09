@@ -5,7 +5,6 @@ export interface HTMLCollapsableItem extends HTMLElement {
 export declare class CollapsableItem {
     private readonly collapsable;
     private readonly item;
-    private className;
     isExpanded: boolean;
     readonly id: string;
     readonly controlElements: HTMLElement[];

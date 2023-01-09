@@ -15,6 +15,7 @@ export type CollapsableOptions = {
 		preventDefault: boolean
 	}
 	classNames: {
+		link: string
 		expanded: string
 		collapsed: string
 		defaultExpanded: string
@@ -38,22 +39,38 @@ export class Collapsable {
 		event: 'click',
 		preventDefault: true,
 
-		fxDuration: 0, // duration of the effect, affects delay between `expand.collapsable`(`collapse.collapsable`) and `expanded.collapsable` (`collapsed.collapsable`) evetns are triggered; default value is 500 when fx set to slide
+		// Duration of the effect, affects delay between `expand.collapsable`(`collapse.collapsable`) and
+		// `expanded.collapsable` (`collapsed.collapsable`) events are triggered.
+		fxDuration: 0,
 
-		accordion: false, // determines, if there could be more than one expanded box in same time; related to jQuery set on which initialized
-		collapsableAll: true, // possibility of collapsing all boxes from set
+		// Determines, if there could be more than one expanded box in same time.
+		accordion: false,
 
+		// Is it possible to collapsable (close) all elements from giver collapsable set?
+		collapsableAll: true,
+
+		// External links for operating collapsable set. These could be anywhere in the DOM.
 		externalLinks: {
-			// external links for operating collapsable set, can be anywhere else in DOM
-			selector: '.js-collapsable-ext-link', // CSS selector for external links; it has to be anchors; the click event is binded
-			preventDefault: false // whether preventDefault is called on extLinks click
+			// CSS selector for external links. Has to be HTMLAnchorElement, click event is binded.
+			selector: '.js-collapsable-ext-link',
+
+			// Whether preventDefault is called on extLinks click
+			preventDefault: false
 		},
 
+		// CSS class names used by the plugin
 		classNames: {
-			// CSS class names to be used on collapsable box; they are added to element, on which collapsable has been called
+			// This class is added to links inside the control elements (or the control element itself, if it is link).
+			link: 'js-collapsable__link',
+
+			// Expanded / collapsed class on collapsable items.
 			expanded: 'js-collapsable--expanded',
 			collapsed: 'js-collapsable--collapsed',
+
+			// Collapsable item with this class will be expanded on init.
 			defaultExpanded: 'js-collapsable--default-expanded',
+
+			// Class added to external link, when its collapsable item is expanded.
 			externalLinkActive: 'js-collapsable-ext-link--active'
 		}
 	}
@@ -113,7 +130,7 @@ export class Collapsable {
 			this.defaultExpandedItem = this.defaultExpandedItem.slice(0, 1)
 		}
 
-		// if no default expanded is provided and options.collapsableAll === false, we choose first item
+		// If no default expanded is provided and options.collapsableAll === false, we choose first item
 		if (this.defaultExpandedItem.length === 0 && !options.collapsableAll) {
 			this.defaultExpandedItem.push(this.items[0])
 		}
@@ -150,7 +167,7 @@ export class Collapsable {
 	public expandAll(data?: any): void {
 		const { options } = this
 
-		// if accordion, we only want to expand one (first) box, or none if already expanded
+		// If accordion, we only want to expand one (first) box, or none if already expanded
 		if (options.accordion && this.getExpanded().length) {
 			return
 		}

@@ -14,6 +14,7 @@ export type CollapsableOptions = {
         preventDefault: boolean;
     };
     classNames: {
+        link: string;
         expanded: string;
         collapsed: string;
         defaultExpanded: string;

@@ -38,7 +38,6 @@ function getUid() {
 
 class CollapsableItem {
     constructor(collapsable, element) {
-        this.className = 'js-collapsable';
         this.isExpanded = true;
         this.listenersMap = [];
         this.collapsable = collapsable;
@@ -57,6 +56,7 @@ class CollapsableItem {
         this.item.collapsableItem = this;
     }
     prepareDOM() {
+        const { options } = this.collapsable;
         if (!this.item.id) {
             this.item.id = this.id;
         }
@@ -68,13 +68,10 @@ class CollapsableItem {
         });
         this.controlElements.forEach((control) => {
             let link;
-            // a.ca-control -> add class .ca-link
             if (control.tagName.toLowerCase() === 'a') {
                 link = control;
             }
-            // .ca-control a -> add class .ca-link
             else if ((link = control.querySelector('a'))) ;
-            // no anchor found, create custom
             else {
                 link = document.createElement('a');
                 link.dataset.caCreated = 'true';
@@ -82,7 +79,7 @@ class CollapsableItem {
                 link.innerHTML = control.outerHTML;
                 control.replaceWith(link);
             }
-            link.classList.add(`${this.className}__link`);
+            link.classList.add(options.classNames.link);
             link.setAttribute('aria-controls', ariaControlsAttr.join(' '));
             if (link.getAttribute('href') === '#') {
                 link.setAttribute('href', `#${this.item.id}`);
@@ -156,9 +153,11 @@ class CollapsableItem {
     }
     expand(collapsableEvent, data, force) {
         const { options } = this.collapsable;
-        const expandedItem = this.collapsable.getExpanded(); // accordion -> max one expanded item
-        this.collapsable.promiseOpen = true; // allows us to collapse expanded item even if there might be collapseAll === false option
-        // if accordion, we have to collapse previously opened item before expanding; if accordion element hasn't collapsed, we can't continue
+        const expandedItem = this.collapsable.getExpanded();
+        // This allows us to collapse expanded item even if there might be collapseAll === false option
+        this.collapsable.promiseOpen = true;
+        // If accordion, we have to collapse previously opened item before expanding; if accordion element hasn't
+        // collapsed, we can't continue
         if (options.accordion && expandedItem.length && !expandedItem[0].collapse(collapsableEvent, data, force)) {
             this.collapsable.promiseOpen = false;
             return false;
@@ -173,7 +172,9 @@ class CollapsableItem {
         });
         this.item.dispatchEvent(event);
         if (event.defaultPrevented && !force) {
-            // collapsableAll === false && accordion === true -> if the box has not opened, we must make sure something is opened, therefore we force-open previously opened box (options.accordion is true means we tried to collapse something), simulating it has never closed in first place
+            // collapsableAll === false && accordion === true -> if the box has not opened, we must make sure something
+            // remained open, therefore we force-open previously opened box (options.accordion === true means we tried
+            // to collapse something), simulating it has never closed in first place
             if (!options.collapsableAll && options.accordion) {
                 expandedItem[0].expand(collapsableEvent, data, true);
             }
@@ -183,7 +184,8 @@ class CollapsableItem {
     }
     collapse(collapsableEvent, data, force) {
         const { options } = this.collapsable;
-        // if we can't collapse all, we are not promised to open something and there is only one opened box, then we can't continue
+        // If we can't collapse all & we are not promised to open something & there is only one opened box, we can't
+        // continue
         if (!options.collapsableAll && !this.collapsable.promiseOpen && this.collapsable.getExpanded().length < 2) {
             return false;
         }
@@ -205,7 +207,6 @@ class CollapsableItem {
     }
     destroy() {
         const { options } = this.collapsable;
-        // remove classes and event handlers from main element
         this.item.classList.remove(options.classNames.collapsed);
         this.item.classList.remove(options.classNames.expanded);
         delete this.item.collapsableItem;
@@ -217,7 +218,7 @@ class CollapsableItem {
                 link.parentElement.innerHTML = link.innerHTML;
             }
             else {
-                link.classList.remove(`${this.className}__link`);
+                link.classList.remove(options.classNames.link);
                 link.removeAttribute('aria-controls');
                 link.removeAttribute('aria-expanded');
             }
@@ -251,15 +252,11 @@ class CollapsableExtLink {
             if (options.externalLinks.preventDefault) {
                 event.preventDefault();
             }
-            const dispatchEvent = new CustomEvent(options.event, {
-                bubbles: true,
-                detail: { collapsableEvent: event }
-            });
             if (this.collapsableItem.isExpanded) {
-                this.collapsableItem.collapse(dispatchEvent, null, false);
+                this.collapsableItem.collapse(event, null, false);
             }
             else {
-                this.collapsableItem.expand(dispatchEvent, null, false);
+                this.collapsableItem.expand(event, null, false);
             }
         };
         this.extLink.addEventListener('click', this.listener);
@@ -285,19 +282,30 @@ class Collapsable {
             box: '.js-collapsable__box',
             event: 'click',
             preventDefault: true,
+            // Duration of the effect, affects delay between `expand.collapsable`(`collapse.collapsable`) and
+            // `expanded.collapsable` (`collapsed.collapsable`) events are triggered.
             fxDuration: 0,
+            // Determines, if there could be more than one expanded box in same time.
             accordion: false,
+            // Is it possible to collapsable (close) all elements from giver collapsable set?
             collapsableAll: true,
+            // External links for operating collapsable set. These could be anywhere in the DOM.
             externalLinks: {
-                // external links for operating collapsable set, can be anywhere else in DOM
+                // CSS selector for external links. Has to be HTMLAnchorElement, click event is binded.
                 selector: '.js-collapsable-ext-link',
-                preventDefault: false // whether preventDefault is called on extLinks click
+                // Whether preventDefault is called on extLinks click
+                preventDefault: false
             },
+            // CSS class names used by the plugin
             classNames: {
-                // CSS class names to be used on collapsable box; they are added to element, on which collapsable has been called
+                // This class is added to links inside the control elements (or the control element itself, if it is link).
+                link: 'js-collapsable__link',
+                // Expanded / collapsed class on collapsable items.
                 expanded: 'js-collapsable--expanded',
                 collapsed: 'js-collapsable--collapsed',
+                // Collapsable item with this class will be expanded on init.
                 defaultExpanded: 'js-collapsable--default-expanded',
+                // Class added to external link, when its collapsable item is expanded.
                 externalLinkActive: 'js-collapsable-ext-link--active'
             }
         };
@@ -340,7 +348,7 @@ class Collapsable {
         if (options.accordion) {
             this.defaultExpandedItem = this.defaultExpandedItem.slice(0, 1);
         }
-        // if no default expanded is provided and options.collapsableAll === false, we choose first item
+        // If no default expanded is provided and options.collapsableAll === false, we choose first item
         if (this.defaultExpandedItem.length === 0 && !options.collapsableAll) {
             this.defaultExpandedItem.push(this.items[0]);
         }
@@ -369,7 +377,7 @@ class Collapsable {
     }
     expandAll(data) {
         const { options } = this;
-        // if accordion, we only want to expand one (first) box, or none if already expanded
+        // If accordion, we only want to expand one (first) box, or none if already expanded
         if (options.accordion && this.getExpanded().length) {
             return;
         }
