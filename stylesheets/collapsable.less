@@ -1,0 +1,46 @@
+.js {
+	.js-collapsable--expanded, .js-collapsable--default-expanded {
+		.js-collapsable__box {
+			top: 0;
+			position: relative;
+			opacity: 1;
+			visibility: visible;
+			transform: translateY(0);
+		}
+		.js-collapsable__control-collapse { display: unset; }
+		.js-collapsable__control-expand { display: none; }
+		.js-collapsable__icon { transform: rotateX(180deg); }
+	}
+
+	&, .js-collapsable--collapsed {
+		.js-collapsable__box {
+			position: absolute;
+			top: -10000px;
+			display: block;
+			opacity: 0;
+			visibility: hidden;
+			transform: translateY(20px);
+			transition:
+					opacity 300ms ease-in-out,
+					transform 500ms ease-in-out;
+		}
+		.js-collapsable__control-collapse { display: none; }
+		.js-collapsable__control-expand { display: unset; }
+	}
+
+	.js-collapsable__icon:before {
+		display: inline-block;
+		margin: 0 .5em 4px 0;
+		content: "▼";
+		font-size: 12px;
+		transition: transform 300ms ease-in-out;
+	}
+
+	.js-collapsable--expanded {
+		.js-collapsable__icon:before { transform: rotateX(180deg) }
+	}
+}
+
+.no-js {
+	.js-collapsable__control { display:none; }
+}

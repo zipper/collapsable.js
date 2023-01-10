@@ -1,10 +1,13 @@
 {
 	"name": "jquery.collapsable-gh-pages",
 	"private": true,
+	"dependencies": {
+		"collapsable.js": "^3.0.0-rc.2"
+	},
 	"devDependencies": {
-		"grunt": "~0.4.5",
-		"grunt-cli": "~0.1.13",
-		"grunt-bower-install-simple": "~1.0",
-		"grunt-contrib-copy": "~1.0.0"
+		"grunt": "~1.5.3",
+		"grunt-cli": "~1.4.3",
+		"grunt-sync": "~0.8.2",
+		"grunt-contrib-less": "~3.0.0"
 	}
 }

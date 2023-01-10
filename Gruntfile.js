@@ -1,26 +1,14 @@
 module.exports = function(grunt) {
 	grunt.initConfig({
-		'bower-install-simple': {
-			options: {
-				directory: 'temp/bower/'
-			},
+		sync: {
 			production: {
-				options: {
-					production: true,
-					interactive: false
-				}
-			}
-		},
-		copy: {
-			production: {
-				src: 'temp/bower/jquery.collapsable/dist/jquery.collapsable.js',
-				dest: 'js/jquery.collapsable.js'
+				src: 'node_modules/collapsable.js/dist/Collapsable.js',
+				dest: 'js/Collapsable.js'
 			}
 		}
 	});
 
-	grunt.loadNpmTasks('grunt-bower-install-simple');
-	grunt.loadNpmTasks('grunt-contrib-copy');
+	grunt.loadNpmTasks('grunt-sync');
 
-	grunt.registerTask('default', ['bower-install-simple:production', 'copy']);
+	grunt.registerTask('default', ['sync']);
 };
