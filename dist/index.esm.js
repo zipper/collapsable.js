@@ -5,7 +5,7 @@
  * @author Radek Šerý <radek.sery@gmail.com>
  * @license MIT
  *
- * @version 3.0.0-rc.1
+ * @version 3.0.0-rc.4
  */
 
 // Deep merge of objects
@@ -76,8 +76,8 @@ class CollapsableItem {
                 link = document.createElement('a');
                 link.dataset.caCreated = 'true';
                 link.href = '#';
-                link.innerHTML = control.outerHTML;
-                control.replaceWith(link);
+                link.innerHTML = control.innerHTML;
+                control.replaceChildren(link);
             }
             link.classList.add(options.classNames.link);
             link.setAttribute('aria-controls', ariaControlsAttr.join(' '));
