@@ -83,8 +83,8 @@ export class CollapsableItem {
 				link = document.createElement('a')
 				link.dataset.caCreated = 'true'
 				link.href = '#'
-				link.innerHTML = control.outerHTML
-				control.replaceWith(link)
+				link.innerHTML = control.innerHTML
+				control.replaceChildren(link)
 			}
 
 			link.classList.add(options.classNames.link)
