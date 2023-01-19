@@ -301,8 +301,8 @@ class Collapsable {
             },
             // CSS class names used by the plugin
             classNames: {
-                // This class is added to links inside the control elements (or the control element itself, if it is link).
-                link: 'js-collapsable__link',
+                // This class is added to buttons (or links) inside the control elements (or the control element itself, if it is button/link).
+                link: 'js-collapsable__button',
                 // Expanded / collapsed class on collapsable items.
                 expanded: 'js-collapsable--expanded',
                 collapsed: 'js-collapsable--collapsed',
