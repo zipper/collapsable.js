@@ -20,22 +20,22 @@ export interface HTMLCollapsableItem extends HTMLElement {
 }
 
 export class CollapsableItem {
-	private readonly collapsable: Collapsable
-	private readonly item: HTMLCollapsableItem
+	public readonly collapsable: Collapsable
 
-	public isExpanded = true
+	public readonly id: string
 
-	public readonly id
-
+	public readonly element: HTMLCollapsableItem
 	public readonly controlElements: HTMLElement[]
-	public readonly controlLinkElements: HTMLElement[]
+	public readonly controlButtonElements: HTMLElement[]
 	public readonly boxElements: HTMLElement[]
+
+	private _isExpanded = true
 
 	private listenersMap: ListenersMapItem[] = []
 
 	public constructor(collapsable: Collapsable, element: HTMLElement) {
 		this.collapsable = collapsable
-		this.item = element as HTMLCollapsableItem
+		this.element = element as HTMLCollapsableItem
 
 		this.id = element.id || getUid()
 
@@ -47,25 +47,25 @@ export class CollapsableItem {
 		}
 
 		this.controlElements = Array.from(controlElements)
-		this.controlLinkElements = []
+		this.controlButtonElements = []
 		this.boxElements = Array.from(boxElements)
 
 		this.prepareDOM()
 		this.addHandlers()
 
-		this.item.collapsableItem = this
+		this.element.collapsableItem = this
 	}
 
 	private prepareDOM() {
 		const { options } = this.collapsable
 
-		if (!this.item.id) {
-			this.item.id = this.id
+		if (!this.element.id) {
+			this.element.id = this.id
 		}
 
 		const ariaControlsAttr: string[] = []
 		this.boxElements.forEach((box, index) => {
-			const boxItemId = box.id || `${this.item.id}-ca-box-${index}`
+			const boxItemId = box.id || `${this.element.id}-ca-box-${index}`
 
 			box.id = boxItemId
 
@@ -75,14 +75,15 @@ export class CollapsableItem {
 		this.controlElements.forEach((control) => {
 			let link
 
-			if (control.tagName.toLowerCase() === 'a') {
+			const tagName = control.tagName.toLowerCase()
+
+			if (tagName === 'button' || tagName === 'a') {
 				link = control
-			} else if ((link = control.querySelector('a'))) {
+			} else if ((link = control.querySelector<HTMLElement>('button, a'))) {
 				// noop
 			} else {
-				link = document.createElement('a')
+				link = document.createElement('button')
 				link.dataset.caCreated = 'true'
-				link.href = '#'
 				link.innerHTML = control.innerHTML
 				control.replaceChildren(link)
 			}
@@ -91,10 +92,10 @@ export class CollapsableItem {
 			link.setAttribute('aria-controls', ariaControlsAttr.join(' '))
 
 			if (link.getAttribute('href') === '#') {
-				link.setAttribute('href', `#${this.item.id}`)
+				link.setAttribute('href', `#${this.element.id}`)
 			}
 
-			this.controlLinkElements.push(link)
+			this.controlButtonElements.push(link)
 		})
 	}
 
@@ -107,14 +108,14 @@ export class CollapsableItem {
 				event.preventDefault()
 			}
 
-			if (this.isExpanded) {
+			if (this._isExpanded) {
 				this.collapse(passEvent, null, false)
 			} else {
 				this.expand(passEvent, null, false)
 			}
 		}
 
-		this.controlLinkElements.forEach((link) => {
+		this.controlButtonElements.forEach((link) => {
 			link.addEventListener(options.event, listener as EventListener)
 			this.listenersMap.push({
 				element: link,
@@ -148,12 +149,12 @@ export class CollapsableItem {
 			}
 		})
 
-		this.isExpanded = action === 'expand'
+		this._isExpanded = action === 'expand'
 
 		const extLinks = this.collapsable.getExtLinkById(this.id)
-		extLinks.forEach((extLink) => extLink.toggleClass(this.isExpanded))
+		extLinks.forEach((extLink) => extLink.toggleClass())
 
-		this.controlLinkElements.forEach((link) => link.setAttribute('aria-expanded', String(action === 'expand')))
+		this.controlButtonElements.forEach((link) => link.setAttribute('aria-expanded', String(action === 'expand')))
 		this.boxElements.forEach((box) => {
 			box.setAttribute('aria-hidden', String(action !== 'expand'))
 
@@ -164,11 +165,11 @@ export class CollapsableItem {
 			}
 		})
 
-		this.item.classList.remove(removeClass)
-		this.item.classList.add(addClass)
+		this.element.classList.remove(removeClass)
+		this.element.classList.add(addClass)
 
 		setTimeout(() => {
-			this.item.dispatchEvent(finishedEvent)
+			this.element.dispatchEvent(finishedEvent)
 		}, options.fxDuration)
 
 		return true
@@ -197,7 +198,7 @@ export class CollapsableItem {
 				collapsableEvent
 			}
 		})
-		this.item.dispatchEvent(event)
+		this.element.dispatchEvent(event)
 
 		if (event.defaultPrevented && !force) {
 			// collapsableAll === false && accordion === true -> if the box has not opened, we must make sure something
@@ -229,7 +230,7 @@ export class CollapsableItem {
 				collapsableEvent
 			}
 		})
-		this.item.dispatchEvent(event)
+		this.element.dispatchEvent(event)
 
 		if (event.defaultPrevented && !force) {
 			return false
@@ -238,22 +239,26 @@ export class CollapsableItem {
 		return this.handleExpandCollapse('collapse', collapsableEvent, data)
 	}
 
-	public isDefaultExpanded(): boolean {
-		return this.item.classList.contains(this.collapsable.options.classNames.defaultExpanded)
+	public get isDefaultExpanded(): boolean {
+		return this.element.classList.contains(this.collapsable.options.classNames.defaultExpanded)
+	}
+
+	public get isExpanded(): boolean {
+		return this._isExpanded
 	}
 
 	public destroy(): void {
 		const { options } = this.collapsable
 
-		this.item.classList.remove(options.classNames.collapsed)
-		this.item.classList.remove(options.classNames.expanded)
-		delete this.item.collapsableItem
+		this.element.classList.remove(options.classNames.collapsed)
+		this.element.classList.remove(options.classNames.expanded)
+		delete this.element.collapsableItem
 
 		this.listenersMap.forEach(({ element, eventName, listener }) => {
 			element.removeEventListener(eventName, listener)
 		})
 
-		this.controlLinkElements.forEach((link) => {
+		this.controlButtonElements.forEach((link) => {
 			if (link.dataset.caCreated && link.parentElement) {
 				link.parentElement.innerHTML = link.innerHTML
 			} else {
@@ -268,7 +273,7 @@ export class CollapsableItem {
 			box.removeAttribute('hidden')
 		})
 
-		this.item.dispatchEvent(new CustomEvent('destroy.collapsable', { bubbles: true }))
+		this.element.dispatchEvent(new CustomEvent('destroy.collapsable', { bubbles: true }))
 	}
 }
 

@@ -47,10 +47,10 @@ export class CollapsableExtLink {
 		this.extLink.addEventListener('click', this.listener)
 	}
 
-	public toggleClass(expanded: boolean): void {
+	public toggleClass(): void {
 		const { options } = this.collapsable
 
-		this.extLink.classList.toggle(options.classNames.externalLinkActive, expanded)
+		this.extLink.classList.toggle(options.classNames.externalLinkActive, this.collapsableItem.isExpanded)
 	}
 
 	public destroy(): void {

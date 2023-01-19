@@ -26,10 +26,10 @@ export type CollapsableEvent = CustomEvent<{
     data?: any;
 }>;
 export declare class Collapsable {
-    options: CollapsableOptions;
+    readonly options: CollapsableOptions;
     promiseOpen: boolean;
+    readonly items: CollapsableItem[];
     private extLinks;
-    private items;
     private defaultExpandedItem;
     private readonly defaults;
     constructor(elements: NodeListOf<HTMLElement>, options?: DeepPartial<CollapsableOptions>);

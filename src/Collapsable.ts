@@ -26,11 +26,11 @@ export type CollapsableOptions = {
 export type CollapsableEvent = CustomEvent<{ collapsableEvent: CustomEvent | Event; data?: any }>
 
 export class Collapsable {
-	public options: CollapsableOptions
+	public readonly options: CollapsableOptions
 	public promiseOpen: boolean
 
+	public readonly items: CollapsableItem[] = []
 	private extLinks: CollapsableExtLink[] = []
-	private items: CollapsableItem[] = []
 	private defaultExpandedItem: CollapsableItem[] = []
 
 	private readonly defaults: CollapsableOptions = {
@@ -115,7 +115,7 @@ export class Collapsable {
 		const { options } = this
 		const hash = window.location.hash.substring(1)
 
-		const defaultExpanded = this.items.filter((item) => item.isDefaultExpanded())
+		const defaultExpanded = this.items.filter((item) => item.isDefaultExpanded)
 		const defaultExpandedFromUrl = hash ? this.items.find((item) => item.id === hash) : undefined
 
 		if (defaultExpandedFromUrl) {

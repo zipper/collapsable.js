@@ -5,7 +5,7 @@
  * @author Radek Šerý <radek.sery@gmail.com>
  * @license MIT
  *
- * @version 3.0.0-rc.4
+ * @version 3.0.0
  */
 
 (function (global, factory) {
@@ -44,10 +44,10 @@
 
     class CollapsableItem {
         constructor(collapsable, element) {
-            this.isExpanded = true;
+            this._isExpanded = true;
             this.listenersMap = [];
             this.collapsable = collapsable;
-            this.item = element;
+            this.element = element;
             this.id = element.id || getUid();
             const controlElements = element.querySelectorAll(collapsable.options.control);
             const boxElements = element.querySelectorAll(collapsable.options.box);
@@ -55,42 +55,42 @@
                 throw new Error(`Collapsable: Missing control or box element.'`);
             }
             this.controlElements = Array.from(controlElements);
-            this.controlLinkElements = [];
+            this.controlButtonElements = [];
             this.boxElements = Array.from(boxElements);
             this.prepareDOM();
             this.addHandlers();
-            this.item.collapsableItem = this;
+            this.element.collapsableItem = this;
         }
         prepareDOM() {
             const { options } = this.collapsable;
-            if (!this.item.id) {
-                this.item.id = this.id;
+            if (!this.element.id) {
+                this.element.id = this.id;
             }
             const ariaControlsAttr = [];
             this.boxElements.forEach((box, index) => {
-                const boxItemId = box.id || `${this.item.id}-ca-box-${index}`;
+                const boxItemId = box.id || `${this.element.id}-ca-box-${index}`;
                 box.id = boxItemId;
                 ariaControlsAttr.push(boxItemId);
             });
             this.controlElements.forEach((control) => {
                 let link;
-                if (control.tagName.toLowerCase() === 'a') {
+                const tagName = control.tagName.toLowerCase();
+                if (tagName === 'button' || tagName === 'a') {
                     link = control;
                 }
-                else if ((link = control.querySelector('a'))) ;
+                else if ((link = control.querySelector('button, a'))) ;
                 else {
-                    link = document.createElement('a');
+                    link = document.createElement('button');
                     link.dataset.caCreated = 'true';
-                    link.href = '#';
                     link.innerHTML = control.innerHTML;
                     control.replaceChildren(link);
                 }
                 link.classList.add(options.classNames.link);
                 link.setAttribute('aria-controls', ariaControlsAttr.join(' '));
                 if (link.getAttribute('href') === '#') {
-                    link.setAttribute('href', `#${this.item.id}`);
+                    link.setAttribute('href', `#${this.element.id}`);
                 }
-                this.controlLinkElements.push(link);
+                this.controlButtonElements.push(link);
             });
         }
         addHandlers() {
@@ -100,14 +100,14 @@
                 if (options.preventDefault) {
                     event.preventDefault();
                 }
-                if (this.isExpanded) {
+                if (this._isExpanded) {
                     this.collapse(passEvent, null, false);
                 }
                 else {
                     this.expand(passEvent, null, false);
                 }
             };
-            this.controlLinkElements.forEach((link) => {
+            this.controlButtonElements.forEach((link) => {
                 link.addEventListener(options.event, listener);
                 this.listenersMap.push({
                     element: link,
@@ -137,10 +137,10 @@
                     collapsableEvent
                 }
             });
-            this.isExpanded = action === 'expand';
+            this._isExpanded = action === 'expand';
             const extLinks = this.collapsable.getExtLinkById(this.id);
-            extLinks.forEach((extLink) => extLink.toggleClass(this.isExpanded));
-            this.controlLinkElements.forEach((link) => link.setAttribute('aria-expanded', String(action === 'expand')));
+            extLinks.forEach((extLink) => extLink.toggleClass());
+            this.controlButtonElements.forEach((link) => link.setAttribute('aria-expanded', String(action === 'expand')));
             this.boxElements.forEach((box) => {
                 box.setAttribute('aria-hidden', String(action !== 'expand'));
                 if (action === 'collapse') {
@@ -150,10 +150,10 @@
                     box.removeAttribute('hidden');
                 }
             });
-            this.item.classList.remove(removeClass);
-            this.item.classList.add(addClass);
+            this.element.classList.remove(removeClass);
+            this.element.classList.add(addClass);
             setTimeout(() => {
-                this.item.dispatchEvent(finishedEvent);
+                this.element.dispatchEvent(finishedEvent);
             }, options.fxDuration);
             return true;
         }
@@ -176,7 +176,7 @@
                     collapsableEvent
                 }
             });
-            this.item.dispatchEvent(event);
+            this.element.dispatchEvent(event);
             if (event.defaultPrevented && !force) {
                 // collapsableAll === false && accordion === true -> if the box has not opened, we must make sure something
                 // remained open, therefore we force-open previously opened box (options.accordion === true means we tried
@@ -202,24 +202,27 @@
                     collapsableEvent
                 }
             });
-            this.item.dispatchEvent(event);
+            this.element.dispatchEvent(event);
             if (event.defaultPrevented && !force) {
                 return false;
             }
             return this.handleExpandCollapse('collapse', collapsableEvent, data);
         }
-        isDefaultExpanded() {
-            return this.item.classList.contains(this.collapsable.options.classNames.defaultExpanded);
+        get isDefaultExpanded() {
+            return this.element.classList.contains(this.collapsable.options.classNames.defaultExpanded);
+        }
+        get isExpanded() {
+            return this._isExpanded;
         }
         destroy() {
             const { options } = this.collapsable;
-            this.item.classList.remove(options.classNames.collapsed);
-            this.item.classList.remove(options.classNames.expanded);
-            delete this.item.collapsableItem;
+            this.element.classList.remove(options.classNames.collapsed);
+            this.element.classList.remove(options.classNames.expanded);
+            delete this.element.collapsableItem;
             this.listenersMap.forEach(({ element, eventName, listener }) => {
                 element.removeEventListener(eventName, listener);
             });
-            this.controlLinkElements.forEach((link) => {
+            this.controlButtonElements.forEach((link) => {
                 if (link.dataset.caCreated && link.parentElement) {
                     link.parentElement.innerHTML = link.innerHTML;
                 }
@@ -233,7 +236,7 @@
                 box.removeAttribute('aria-hidden');
                 box.removeAttribute('hidden');
             });
-            this.item.dispatchEvent(new CustomEvent('destroy.collapsable', { bubbles: true }));
+            this.element.dispatchEvent(new CustomEvent('destroy.collapsable', { bubbles: true }));
         }
     }
 
@@ -267,9 +270,9 @@
             };
             this.extLink.addEventListener('click', this.listener);
         }
-        toggleClass(expanded) {
+        toggleClass() {
             const { options } = this.collapsable;
-            this.extLink.classList.toggle(options.classNames.externalLinkActive, expanded);
+            this.extLink.classList.toggle(options.classNames.externalLinkActive, this.collapsableItem.isExpanded);
         }
         destroy() {
             if (this.listener) {
@@ -280,8 +283,8 @@
 
     class Collapsable {
         constructor(elements, options) {
-            this.extLinks = [];
             this.items = [];
+            this.extLinks = [];
             this.defaultExpandedItem = [];
             this.defaults = {
                 control: '.js-collapsable__control',
@@ -343,7 +346,7 @@
         prepareDefaultExpanded() {
             const { options } = this;
             const hash = window.location.hash.substring(1);
-            const defaultExpanded = this.items.filter((item) => item.isDefaultExpanded());
+            const defaultExpanded = this.items.filter((item) => item.isDefaultExpanded);
             const defaultExpandedFromUrl = hash ? this.items.find((item) => item.id === hash) : undefined;
             if (defaultExpandedFromUrl) {
                 this.defaultExpandedItem.push(defaultExpandedFromUrl);

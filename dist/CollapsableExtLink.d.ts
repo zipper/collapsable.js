@@ -7,6 +7,6 @@ export declare class CollapsableExtLink {
     private listener;
     constructor(collapsable: Collapsable, link: HTMLAnchorElement);
     private addHandler;
-    toggleClass(expanded: boolean): void;
+    toggleClass(): void;
     destroy(): void;
 }
