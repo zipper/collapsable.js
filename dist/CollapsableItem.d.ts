@@ -7,7 +7,7 @@ export declare class CollapsableItem {
     readonly id: string;
     readonly element: HTMLCollapsableItem;
     readonly controlElements: HTMLElement[];
-    readonly controlButtonElements: HTMLElement[];
+    readonly controlInteractiveElements: HTMLElement[];
     readonly boxElements: HTMLElement[];
     private _isExpanded;
     private listenersMap;

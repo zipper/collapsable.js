@@ -5,7 +5,7 @@
  * @author Radek Šerý <radek.sery@gmail.com>
  * @license MIT
  *
- * @version 3.0.0
+ * @version 3.1.0
  */
 
 (function (global, factory) {
@@ -55,7 +55,7 @@
                 throw new Error(`Collapsable: Missing control or box element.'`);
             }
             this.controlElements = Array.from(controlElements);
-            this.controlButtonElements = [];
+            this.controlInteractiveElements = [];
             this.boxElements = Array.from(boxElements);
             this.prepareDOM();
             this.addHandlers();
@@ -73,24 +73,27 @@
                 ariaControlsAttr.push(boxItemId);
             });
             this.controlElements.forEach((control) => {
-                let link;
+                let interactiveElement;
                 const tagName = control.tagName.toLowerCase();
                 if (tagName === 'button' || tagName === 'a') {
-                    link = control;
+                    interactiveElement = control;
                 }
-                else if ((link = control.querySelector('button, a'))) ;
+                else if ((interactiveElement = control.querySelector('button, a'))) ;
                 else {
-                    link = document.createElement('button');
-                    link.dataset.caCreated = 'true';
-                    link.innerHTML = control.innerHTML;
-                    control.replaceChildren(link);
+                    interactiveElement = document.createElement('button');
+                    interactiveElement.dataset.caCreated = 'true';
+                    interactiveElement.innerHTML = control.innerHTML;
+                    control.replaceChildren(interactiveElement);
                 }
-                link.classList.add(options.classNames.link);
-                link.setAttribute('aria-controls', ariaControlsAttr.join(' '));
-                if (link.getAttribute('href') === '#') {
-                    link.setAttribute('href', `#${this.element.id}`);
+                interactiveElement.classList.add(options.classNames.interactiveElement);
+                interactiveElement.setAttribute('aria-controls', ariaControlsAttr.join(' '));
+                if (interactiveElement.tagName.toLowerCase() === 'a') {
+                    interactiveElement.setAttribute('role', 'button');
                 }
-                this.controlButtonElements.push(link);
+                if (interactiveElement.getAttribute('href') === '#') {
+                    interactiveElement.setAttribute('href', `#${this.element.id}`);
+                }
+                this.controlInteractiveElements.push(interactiveElement);
             });
         }
         addHandlers() {
@@ -107,7 +110,7 @@
                     this.expand(passEvent, null, false);
                 }
             };
-            this.controlButtonElements.forEach((link) => {
+            this.controlInteractiveElements.forEach((link) => {
                 link.addEventListener(options.event, listener);
                 this.listenersMap.push({
                     element: link,
@@ -140,7 +143,7 @@
             this._isExpanded = action === 'expand';
             const extLinks = this.collapsable.getExtLinkById(this.id);
             extLinks.forEach((extLink) => extLink.toggleClass());
-            this.controlButtonElements.forEach((link) => link.setAttribute('aria-expanded', String(action === 'expand')));
+            this.controlInteractiveElements.forEach((link) => link.setAttribute('aria-expanded', String(action === 'expand')));
             this.boxElements.forEach((box) => {
                 box.setAttribute('aria-hidden', String(action !== 'expand'));
                 if (action === 'collapse') {
@@ -222,14 +225,14 @@
             this.listenersMap.forEach(({ element, eventName, listener }) => {
                 element.removeEventListener(eventName, listener);
             });
-            this.controlButtonElements.forEach((link) => {
-                if (link.dataset.caCreated && link.parentElement) {
-                    link.parentElement.innerHTML = link.innerHTML;
+            this.controlInteractiveElements.forEach((interactiveElement) => {
+                if (interactiveElement.dataset.caCreated && interactiveElement.parentElement) {
+                    interactiveElement.parentElement.innerHTML = interactiveElement.innerHTML;
                 }
                 else {
-                    link.classList.remove(options.classNames.link);
-                    link.removeAttribute('aria-controls');
-                    link.removeAttribute('aria-expanded');
+                    interactiveElement.classList.remove(options.classNames.interactiveElement);
+                    interactiveElement.removeAttribute('aria-controls');
+                    interactiveElement.removeAttribute('aria-expanded');
                 }
             });
             this.boxElements.forEach((box) => {
@@ -308,7 +311,7 @@
                 // CSS class names used by the plugin
                 classNames: {
                     // This class is added to buttons (or links) inside the control elements (or the control element itself, if it is button/link).
-                    link: 'js-collapsable__button',
+                    interactiveElement: 'js-collapsable__button',
                     // Expanded / collapsed class on collapsable items.
                     expanded: 'js-collapsable--expanded',
                     collapsed: 'js-collapsable--collapsed',

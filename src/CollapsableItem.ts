@@ -26,7 +26,7 @@ export class CollapsableItem {
 
 	public readonly element: HTMLCollapsableItem
 	public readonly controlElements: HTMLElement[]
-	public readonly controlButtonElements: HTMLElement[]
+	public readonly controlInteractiveElements: HTMLElement[]
 	public readonly boxElements: HTMLElement[]
 
 	private _isExpanded = true
@@ -47,7 +47,7 @@ export class CollapsableItem {
 		}
 
 		this.controlElements = Array.from(controlElements)
-		this.controlButtonElements = []
+		this.controlInteractiveElements = []
 		this.boxElements = Array.from(boxElements)
 
 		this.prepareDOM()
@@ -73,29 +73,33 @@ export class CollapsableItem {
 		})
 
 		this.controlElements.forEach((control) => {
-			let link
+			let interactiveElement
 
 			const tagName = control.tagName.toLowerCase()
 
 			if (tagName === 'button' || tagName === 'a') {
-				link = control
-			} else if ((link = control.querySelector<HTMLElement>('button, a'))) {
+				interactiveElement = control
+			} else if ((interactiveElement = control.querySelector<HTMLElement>('button, a'))) {
 				// noop
 			} else {
-				link = document.createElement('button')
-				link.dataset.caCreated = 'true'
-				link.innerHTML = control.innerHTML
-				control.replaceChildren(link)
+				interactiveElement = document.createElement('button')
+				interactiveElement.dataset.caCreated = 'true'
+				interactiveElement.innerHTML = control.innerHTML
+				control.replaceChildren(interactiveElement)
 			}
 
-			link.classList.add(options.classNames.link)
-			link.setAttribute('aria-controls', ariaControlsAttr.join(' '))
+			interactiveElement.classList.add(options.classNames.interactiveElement)
+			interactiveElement.setAttribute('aria-controls', ariaControlsAttr.join(' '))
 
-			if (link.getAttribute('href') === '#') {
-				link.setAttribute('href', `#${this.element.id}`)
+			if (interactiveElement.tagName.toLowerCase() === 'a') {
+				interactiveElement.setAttribute('role', 'button')
 			}
 
-			this.controlButtonElements.push(link)
+			if (interactiveElement.getAttribute('href') === '#') {
+				interactiveElement.setAttribute('href', `#${this.element.id}`)
+			}
+
+			this.controlInteractiveElements.push(interactiveElement)
 		})
 	}
 
@@ -115,7 +119,7 @@ export class CollapsableItem {
 			}
 		}
 
-		this.controlButtonElements.forEach((link) => {
+		this.controlInteractiveElements.forEach((link) => {
 			link.addEventListener(options.event, listener as EventListener)
 			this.listenersMap.push({
 				element: link,
@@ -154,7 +158,7 @@ export class CollapsableItem {
 		const extLinks = this.collapsable.getExtLinkById(this.id)
 		extLinks.forEach((extLink) => extLink.toggleClass())
 
-		this.controlButtonElements.forEach((link) => link.setAttribute('aria-expanded', String(action === 'expand')))
+		this.controlInteractiveElements.forEach((link) => link.setAttribute('aria-expanded', String(action === 'expand')))
 		this.boxElements.forEach((box) => {
 			box.setAttribute('aria-hidden', String(action !== 'expand'))
 
@@ -258,13 +262,13 @@ export class CollapsableItem {
 			element.removeEventListener(eventName, listener)
 		})
 
-		this.controlButtonElements.forEach((link) => {
-			if (link.dataset.caCreated && link.parentElement) {
-				link.parentElement.innerHTML = link.innerHTML
+		this.controlInteractiveElements.forEach((interactiveElement) => {
+			if (interactiveElement.dataset.caCreated && interactiveElement.parentElement) {
+				interactiveElement.parentElement.innerHTML = interactiveElement.innerHTML
 			} else {
-				link.classList.remove(options.classNames.link)
-				link.removeAttribute('aria-controls')
-				link.removeAttribute('aria-expanded')
+				interactiveElement.classList.remove(options.classNames.interactiveElement)
+				interactiveElement.removeAttribute('aria-controls')
+				interactiveElement.removeAttribute('aria-expanded')
 			}
 		})
 
