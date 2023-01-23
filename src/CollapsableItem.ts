@@ -197,6 +197,7 @@ export class CollapsableItem {
 
 		const event = new CustomEvent('expand.collapsable', {
 			bubbles: true,
+			cancelable: true,
 			detail: {
 				data,
 				collapsableEvent
@@ -229,6 +230,7 @@ export class CollapsableItem {
 
 		const event = new CustomEvent('collapse.collapsable', {
 			bubbles: true,
+			cancelable: true,
 			detail: {
 				data,
 				collapsableEvent
