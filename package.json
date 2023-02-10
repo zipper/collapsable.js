@@ -46,6 +46,6 @@
 	},
 	"scripts": {
 		"build": "NODE_ENV=production rollup -c",
-		"lint": "NODE_ENV=development eslint src --ext .ts"
+		"lint": "NODE_ENV=development eslint src --ext .ts --max-warnings=0"
 	}
 }
