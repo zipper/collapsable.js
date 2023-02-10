@@ -83,6 +83,7 @@ export class CollapsableItem {
 				// noop
 			} else {
 				interactiveElement = document.createElement('button')
+				interactiveElement.type = 'button'
 				interactiveElement.dataset.caCreated = 'true'
 				interactiveElement.innerHTML = control.innerHTML
 				control.replaceChildren(interactiveElement)
