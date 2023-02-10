@@ -6,38 +6,55 @@ on:
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: crazy-max/ghaction-import-gpg@v4
+      - name: Checkout 🛎
+        uses: actions/checkout@v3
+
+      - name: Import GPG 🔑
+        uses: crazy-max/ghaction-import-gpg@v5.2.0
         with:
           gpg_private_key: ${{ secrets.GPG_SIGNING_KEY }}
           passphrase: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
-      - uses: actions/setup-node@v3
+
+      - name: Setup Node 📦
+        uses: actions/setup-node@v3
         with:
           node-version: lts/*
           cache: npm
-      - run: npm ci
-      - run: npm run build
-      - run: |
+
+      - name: Install dependencies 👨🏻‍💻
+        run: npm ci
+
+      - name: Build 🔨
+        run: npm run build
+
+      - name: Sign files with GPG 🔐
+        run: |
           gpg --local-user 9A80A82A --armor --detach-sign dist/Collapsable.js
           gpg --local-user 9A80A82A --armor --detach-sign dist/Collapsable.min.js
-      - uses: actions/upload-artifact@v3
+
+      - name: Download artifacts 🧩
+        uses: actions/upload-artifact@v3
         with:
           name: dist-files
           path: dist/
 
   release:
+    name: Release
     runs-on: ubuntu-latest
     needs: [build]
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout 🛎
+        uses: actions/checkout@v3
       - uses: actions/download-artifact@v3
         with:
           name: dist-files
           path: dist/
 
-      - uses: softprops/action-gh-release@v1
+      - name: Create release draft 🕊️
+        uses: softprops/action-gh-release@v1
         with:
           draft: true
           files: |
@@ -49,18 +66,26 @@ jobs:
             dist/Collapsable.min.js.asc
 
   publish:
+    name: Publish
     runs-on: ubuntu-latest
     needs: [build]
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
+      - name: Checkout 🛎
+        uses: actions/checkout@v3
+
+      - name: Download artifacts 🧩
+        uses: actions/download-artifact@v3
         with:
           name: dist-files
           path: dist/
-      - uses: actions/setup-node@v3
+
+      - name: Setup Node 📦
+        uses: actions/setup-node@v3
         with:
           node-version: lts/*
           registry-url: 'https://registry.npmjs.org'
-      - run: npm publish
+
+      - name: Publish release 🕊️
+        run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
