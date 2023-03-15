@@ -34,8 +34,8 @@ export class Collapsable {
 	private defaultExpandedItem: CollapsableItem[] = []
 
 	private readonly defaults: CollapsableOptions = {
-		control: '.js-collapsable__control',
-		box: '.js-collapsable__box',
+		control: '.js-collapsable__control:not(:scope .js-collapsable .js-collapsable__control)',
+		box: '.js-collapsable__box:not(:scope .js-collapsable .js-collapsable__box)',
 		event: 'click',
 		preventDefault: true,
 
@@ -51,7 +51,7 @@ export class Collapsable {
 
 		// External links for operating collapsable set. These could be anywhere in the DOM.
 		externalLinks: {
-			// CSS selector for external links. Has to be HTMLAnchorElement, click event is binded.
+			// CSS selector for external links. Has to be HTMLAnchorElement, click event is bound.
 			selector: '.js-collapsable-ext-link',
 
 			// Whether preventDefault is called on extLinks click
