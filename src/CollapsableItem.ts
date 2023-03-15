@@ -42,7 +42,7 @@ export class CollapsableItem {
 		const controlElements = element.querySelectorAll<HTMLElement>(collapsable.options.control)
 		const boxElements = element.querySelectorAll<HTMLElement>(collapsable.options.box)
 
-		if (!controlElements || !boxElements) {
+		if (!controlElements.length || !boxElements.length) {
 			throw new Error(`Collapsable: Missing control or box element.'`)
 		}
 
