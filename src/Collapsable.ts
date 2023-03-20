@@ -75,22 +75,28 @@ export class Collapsable {
 		}
 	}
 
-	public constructor(elements: NodeListOf<HTMLElement>, options?: DeepPartial<CollapsableOptions>) {
+	public constructor(elements: HTMLElement | NodeListOf<HTMLElement>, options?: DeepPartial<CollapsableOptions>) {
 		this.options = mergeDeep({}, this.defaults, options) as CollapsableOptions
 		this.promiseOpen = false
 
-		elements.forEach((element) => {
-			const item = new CollapsableItem(this, element)
-
-			if (item) {
-				this.items.push(item)
-			}
-		})
+		if (elements instanceof NodeList) {
+			elements.forEach(this.initializeItem.bind(this))
+		} else {
+			this.initializeItem(elements)
+		}
 
 		this.handleExternalLinks()
 
 		this.prepareDefaultExpanded()
 		this.handleDefaultExpanded()
+	}
+
+	private initializeItem(element: HTMLElement): void {
+		const item = new CollapsableItem(this, element)
+
+		if (item) {
+			this.items.push(item)
+		}
 	}
 
 	private handleExternalLinks(): void {
