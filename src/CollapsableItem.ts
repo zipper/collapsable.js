@@ -16,7 +16,7 @@ type ListenersMapItem = {
 }
 
 export interface HTMLCollapsableItem extends HTMLElement {
-	collapsableItem?: CollapsableItem
+	collapsableItem: CollapsableItem
 }
 
 export class CollapsableItem {
@@ -35,7 +35,6 @@ export class CollapsableItem {
 
 	public constructor(collapsable: Collapsable, element: HTMLElement) {
 		this.collapsable = collapsable
-		this.element = element as HTMLCollapsableItem
 
 		this.id = element.id || getUid()
 
@@ -53,6 +52,7 @@ export class CollapsableItem {
 		this.prepareDOM()
 		this.addHandlers()
 
+		this.element = element as HTMLCollapsableItem
 		this.element.collapsableItem = this
 	}
 
@@ -259,6 +259,9 @@ export class CollapsableItem {
 
 		this.element.classList.remove(options.classNames.collapsed)
 		this.element.classList.remove(options.classNames.expanded)
+
+		// Element will no longer be HTMLCollapsableItem
+		// @ts-ignore
 		delete this.element.collapsableItem
 
 		this.listenersMap.forEach(({ element, eventName, listener }) => {
