@@ -45,6 +45,7 @@ export class CollapsableItem {
 			throw new Error(`Collapsable: Missing control or box element.'`)
 		}
 
+		this.element = element as HTMLCollapsableItem
 		this.controlElements = Array.from(controlElements)
 		this.controlInteractiveElements = []
 		this.boxElements = Array.from(boxElements)
@@ -52,7 +53,6 @@ export class CollapsableItem {
 		this.prepareDOM()
 		this.addHandlers()
 
-		this.element = element as HTMLCollapsableItem
 		this.element.collapsableItem = this
 	}
 
