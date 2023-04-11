@@ -2,26 +2,32 @@
 export type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T[P]> } : T
 
 // Deep merge of objects
-function isObject(item: unknown) {
-	return item && typeof item === 'object' && !Array.isArray(item)
-}
+export function deepMerge<T extends Record<string, any>>(out: T, ...args: (Record<string, any> | undefined)[]): T {
+	if (!out) {
+		return {} as T
+	}
 
-export function deepMerge(target: any, ...sources: any): Record<string, unknown> {
-	if (!sources.length) return target
-	const source = sources.shift()
+	for (const obj of args) {
+		if (!obj) {
+			continue
+		}
 
-	if (isObject(target) && isObject(source)) {
-		for (const key in source) {
-			if (isObject(source[key])) {
-				if (!target[key]) Object.assign(target, { [key]: {} })
-				deepMerge(target[key], source[key])
-			} else {
-				Object.assign(target, { [key]: source[key] })
+		for (const [key, value] of Object.entries(obj)) {
+			switch (Object.prototype.toString.call(value)) {
+				case '[object Object]':
+					out[key as keyof T] = out[key as keyof T] || ({} as T[keyof T])
+					out[key as keyof T] = deepMerge(out[key as keyof T], value)
+					break
+				case '[object Array]':
+					out[key as keyof T] = deepMerge(new Array(value.length) as T[keyof T], value)
+					break
+				default:
+					out[key as keyof T] = value
 			}
 		}
 	}
 
-	return deepMerge(target, ...sources)
+	return out
 }
 
 // UID for CollapsableItem
