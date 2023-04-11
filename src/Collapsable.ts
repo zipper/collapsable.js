@@ -1,5 +1,5 @@
 import { CollapsableItem } from './CollapsableItem'
-import { DeepPartial, mergeDeep } from './utils'
+import { DeepPartial, deepMerge } from './utils'
 import { CollapsableExtLink } from './CollapsableExtLink'
 
 export type CollapsableOptions = {
@@ -76,7 +76,7 @@ export class Collapsable {
 	}
 
 	public constructor(elements: HTMLElement | NodeListOf<HTMLElement>, options?: DeepPartial<CollapsableOptions>) {
-		this.options = mergeDeep({}, this.defaults, options) as CollapsableOptions
+		this.options = deepMerge({}, this.defaults, options) as CollapsableOptions
 		this.promiseOpen = false
 
 		if (elements instanceof NodeList) {

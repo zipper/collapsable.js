@@ -1,3 +1,2 @@
-import { Collapsable } from './Collapsable'
-
-export default Collapsable
+export { deepMerge } from './utils'
+export { Collapsable as default } from './Collapsable'
