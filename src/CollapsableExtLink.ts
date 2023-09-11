@@ -9,18 +9,11 @@ export class CollapsableExtLink {
 
 	private listener: EventListener | undefined
 
-	public constructor(collapsable: Collapsable, link: HTMLAnchorElement) {
+	public constructor(collapsable: Collapsable, link: HTMLAnchorElement, collapsableItem: CollapsableItem) {
 		this.collapsable = collapsable
 
 		if (link.tagName.toLowerCase() !== 'a') {
-			throw new Error(`Collapsable: External link has to be HTMLAnchorElement.'`)
-		}
-
-		const hash = link.getAttribute('href')?.substring(1)
-		const collapsableItem: CollapsableItem | undefined = this.collapsable.getItemById(hash)
-
-		if (!collapsableItem) {
-			throw new Error(`Collapsable: External link has no associated collapsable item.'`)
+			throw new Error('Collapsable: External link has to be HTMLAnchorElement.')
 		}
 
 		this.extLink = link
