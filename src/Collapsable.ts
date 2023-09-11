@@ -109,11 +109,13 @@ export class Collapsable {
 		const extLinks = document.querySelectorAll<HTMLAnchorElement>(options.externalLinks.selector)
 
 		extLinks.forEach((element) => {
-			const extLink = new CollapsableExtLink(this, element)
+			const collapsableItem = this.getItemById(element.hash.substring(1))
 
-			if (extLink) {
-				this.extLinks.push(extLink)
+			if (!collapsableItem) {
+				return
 			}
+
+			this.extLinks.push(new CollapsableExtLink(this, element, collapsableItem))
 		})
 	}
 
