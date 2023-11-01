@@ -9,15 +9,15 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/zipper/jquery.collapsable"
+		"url": "https://github.com/zipper/collapsable.js"
 	},
 	"keywords": [
 		"collapsable",
 		"collapsible"
 	],
-	"bugs": "https://github.com/zipper/jquery.collapsable/issues",
+	"bugs": "https://github.com/zipper/collapsable.js/issues",
 	"license": "MIT",
-	"homepage": "http://zipper.github.io/jquery.collapsable/",
+	"homepage": "http://zipper.github.io/collapsable.js/",
 	"main": "dist/Collapsable.js",
 	"unpkg": "dist/Collapsable.min.js",
 	"module": "dist/Collapsable.esm.js",
