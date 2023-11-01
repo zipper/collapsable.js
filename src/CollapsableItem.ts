@@ -295,4 +295,12 @@ declare global {
 		'collapsed.collapsable': CollapsableEvent
 		'destroy.collapsable': CustomEvent
 	}
+
+	interface DocumentEventMap {
+		'expand.collapsable': CollapsableEvent
+		'expanded.collapsable': CollapsableEvent
+		'collapse.collapsable': CollapsableEvent
+		'collapsed.collapsable': CollapsableEvent
+		'destroy.collapsable': CustomEvent
+	}
 }
