@@ -248,7 +248,7 @@ export class CollapsableItem {
 
 	public get isDefaultExpanded(): boolean {
 		const defaultExpandedClass = this.element.classList.contains(this.collapsable.options.classNames.defaultExpanded)
-		const mediaDataset = this.element.dataset.defaultCollapsableExpandedMedia
+		const mediaDataset = this.element.dataset.collapsableDefaultExpandedMedia
 
 		if (defaultExpandedClass || !mediaDataset) {
 			return defaultExpandedClass
