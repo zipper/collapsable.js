@@ -4,17 +4,21 @@ import { Collapsable } from './Collapsable'
 export class CollapsableExtLink {
 	private readonly collapsable: Collapsable
 
-	public readonly extLink: HTMLAnchorElement
+	public readonly extLink: HTMLAnchorElement | HTMLButtonElement
 	public readonly collapsableItem: CollapsableItem
 
 	private listener: EventListener | undefined
 	private ariaPerRole!: 'aria-expanded' | 'aria-selected' // always set by `this.prepareDOM()` called from constructor
 
-	public constructor(collapsable: Collapsable, link: HTMLAnchorElement, collapsableItem: CollapsableItem) {
+	public constructor(
+		collapsable: Collapsable,
+		link: HTMLAnchorElement | HTMLButtonElement,
+		collapsableItem: CollapsableItem
+	) {
 		this.collapsable = collapsable
 
-		if (!(link instanceof HTMLAnchorElement)) {
-			throw new Error('Collapsable: External link has to be HTMLAnchorElement.')
+		if (!(link instanceof HTMLAnchorElement) && !(link instanceof HTMLButtonElement)) {
+			throw new Error('Collapsable: External link has to be HTMLAnchorElement or HTMLButtonElement.')
 		}
 
 		this.extLink = link
@@ -27,11 +31,11 @@ export class CollapsableExtLink {
 	private prepareDOM(): void {
 		this.extLink.setAttribute('aria-controls', this.collapsableItem.boxElements.map((box) => box.id).join(' '))
 
-		if (!this.extLink.role) {
+		if (this.extLink instanceof HTMLAnchorElement && !this.extLink.role) {
 			this.extLink.role = 'button'
 		}
 
-		if (this.extLink.role === 'button') {
+		if (this.extLink instanceof HTMLButtonElement || this.extLink.role === 'button') {
 			this.ariaPerRole = 'aria-expanded'
 		} else if (this.extLink.role === 'tab') {
 			this.ariaPerRole = 'aria-selected'
@@ -44,7 +48,7 @@ export class CollapsableExtLink {
 		const { options } = this.collapsable
 
 		this.listener = (event: Event) => {
-			if (options.externalLinks.preventDefault) {
+			if (options.externalLinks.preventDefault || this.extLink.dataset.collapsablePreventDefault !== undefined) {
 				event.preventDefault()
 			}
 
