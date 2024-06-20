@@ -106,10 +106,11 @@ export class Collapsable {
 			return
 		}
 
-		const extLinks = document.querySelectorAll<HTMLAnchorElement>(options.externalLinks.selector)
+		const extLinks = document.querySelectorAll<HTMLAnchorElement | HTMLButtonElement>(options.externalLinks.selector)
 
 		extLinks.forEach((element) => {
-			const collapsableItem = this.getItemById(element.hash.substring(1))
+			const hash = element instanceof HTMLAnchorElement ? element.hash.substring(1) : element.dataset.collapsableId
+			const collapsableItem = this.getItemById(hash)
 
 			if (!collapsableItem) {
 				return
