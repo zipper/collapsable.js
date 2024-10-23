@@ -181,6 +181,11 @@ export class CollapsableItem {
 	}
 
 	public expand(collapsableEvent: any, data: any, force: boolean): boolean {
+		// If the item is already expanded return
+		if (this.isExpanded) {
+			return false
+		}
+
 		const { options } = this.collapsable
 		const expandedItem = this.collapsable.getExpanded()
 
@@ -223,9 +228,12 @@ export class CollapsableItem {
 	public collapse(collapsableEvent: any, data: any, force: boolean): boolean {
 		const { options } = this.collapsable
 
-		// If we can't collapse all & we are not promised to open something & there is only one opened box, we can't
-		// continue
-		if (!options.collapsableAll && !this.collapsable.promiseOpen && this.collapsable.getExpanded().length < 2) {
+		// If the item is not expanded, or if we can't collapse all & we are not promised to open something & there is
+		// only one opened box, we can't continue
+		if (
+			!this.isExpanded ||
+			(!options.collapsableAll && !this.collapsable.promiseOpen && this.collapsable.getExpanded().length < 2)
+		) {
 			return false
 		}
 
