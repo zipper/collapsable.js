@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Import GPG 🔑
         uses: crazy-max/ghaction-import-gpg@v5.2.0
@@ -19,7 +19,7 @@ jobs:
           passphrase: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
 
       - name: Setup Node 📦
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: npm
@@ -36,7 +36,7 @@ jobs:
           gpg --local-user 9A80A82A --armor --detach-sign dist/Collapsable.min.js
 
       - name: Download artifacts 🧩
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist-files
           path: dist/
@@ -47,16 +47,16 @@ jobs:
     needs: [build]
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download artifacts 🧩
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: dist-files
           path: dist/
 
       - name: Create release draft 🕊️
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           draft: true
           files: |
@@ -73,16 +73,16 @@ jobs:
     needs: [build]
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download artifacts 🧩
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: dist-files
           path: dist/
 
       - name: Setup Node 📦
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
           registry-url: 'https://registry.npmjs.org'
