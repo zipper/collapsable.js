@@ -29,6 +29,8 @@ export class CollapsableItem {
 	public readonly controlInteractiveElements: HTMLElement[]
 	public readonly boxElements: HTMLElement[]
 
+	public readonly media: MediaQueryList | null = null
+
 	private _isExpanded = true
 
 	private listenersMap: ListenersMapItem[] = []
@@ -46,12 +48,20 @@ export class CollapsableItem {
 		}
 
 		this.element = element as HTMLCollapsableItem
+
+		const mediaString = element.dataset.collapsableMediaQuery
+		if (mediaString) {
+			this.media = window.matchMedia(mediaString)
+			this.media.addEventListener('change', this.handleMediaChange.bind(this))
+		}
+
 		this.controlElements = Array.from(controlElements)
 		this.controlInteractiveElements = []
 		this.boxElements = Array.from(boxElements)
 
-		this.prepareDOM()
-		this.addHandlers()
+		if (!this.media || this.media.matches) {
+			this.initialize()
+		}
 
 		this.element.collapsableItem = this
 	}
@@ -181,8 +191,9 @@ export class CollapsableItem {
 	}
 
 	public expand(collapsableEvent: any, data: any, force: boolean): boolean {
-		// If the item is already expanded return
-		if (this.isExpanded) {
+		// If the item is already expanded, return, unless it is initialisation, where the item is considered expanded
+		// by default, but may not have all its attributes set.
+		if (this.isExpanded && collapsableEvent.type !== 'init.collapsable') {
 			return false
 		}
 
@@ -229,8 +240,10 @@ export class CollapsableItem {
 		const { options } = this.collapsable
 
 		// If the item is not expanded, or if we can't collapse all & we are not promised to open something & there is
-		// only one opened box, we can't continue
+		// only one opened box, we can't continue. Also when media query doesn't match, we don't want to collapse the
+		// item.
 		if (
+			(this.media && !this.media.matches) ||
 			!this.isExpanded ||
 			(!options.collapsableAll && !this.collapsable.promiseOpen && this.collapsable.getExpanded().length < 2)
 		) {
@@ -255,6 +268,13 @@ export class CollapsableItem {
 	}
 
 	public get isDefaultExpanded(): boolean {
+		// If CollapsableItem uses conditional media query initialization, it is considered NOT expanded for the
+		// purposes of parent Collapsable even though it actually is. This is an edge case for when group of Collapsable
+		// uses collapsableAll option and some of the items are collapsable only at certain breakpoints.
+		if (this.media && !this.media.matches) {
+			return false
+		}
+
 		const defaultExpandedClass = this.element.classList.contains(this.collapsable.options.classNames.defaultExpanded)
 		const mediaDataset = this.element.dataset.collapsableDefaultExpandedMedia
 
@@ -271,15 +291,29 @@ export class CollapsableItem {
 		return this._isExpanded
 	}
 
+	private handleMediaChange(event: MediaQueryListEvent): void {
+		if (event.matches) {
+			this.initialize()
+			this.collapsable.handleDefaultExpanded()
+		} else {
+			this.destroy()
+		}
+	}
+
+	private initialize(): void {
+		this.prepareDOM()
+		this.addHandlers()
+	}
+
 	public destroy(): void {
 		const { options } = this.collapsable
 
+		// After destruction, the item is considered expanded. This is important for possible re-initialization if
+		// collapsable uses conditional initialization with media queries.
+		this._isExpanded = true
+
 		this.element.classList.remove(options.classNames.collapsed)
 		this.element.classList.remove(options.classNames.expanded)
-
-		// Element will no longer be HTMLCollapsableItem
-		// @ts-ignore
-		delete this.element.collapsableItem
 
 		this.listenersMap.forEach(({ element, eventName, listener }) => {
 			element.removeEventListener(eventName, listener)

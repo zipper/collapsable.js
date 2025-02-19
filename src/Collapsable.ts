@@ -87,7 +87,6 @@ export class Collapsable {
 
 		this.handleExternalLinks()
 
-		this.prepareDefaultExpanded()
 		this.handleDefaultExpanded()
 	}
 
@@ -145,7 +144,9 @@ export class Collapsable {
 		}
 	}
 
-	private handleDefaultExpanded(): void {
+	public handleDefaultExpanded(): void {
+		this.prepareDefaultExpanded()
+
 		const { options } = this
 		const collapsableEvent = new CustomEvent('init.collapsable', { bubbles: true })
 
