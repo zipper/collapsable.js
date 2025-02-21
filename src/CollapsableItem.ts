@@ -223,10 +223,8 @@ export class CollapsableItem {
 		this.element.classList.add(addClass)
 
 		if (animations.length === 0) {
-			console.log('no animations')
 			this.element.dispatchEvent(finishedEvent)
 		} else {
-			console.log(animations)
 			this.waitForAnimationsWithTimeout(animations)
 				.then(() => {
 					this.element.dispatchEvent(finishedEvent)
