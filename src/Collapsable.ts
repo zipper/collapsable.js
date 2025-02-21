@@ -7,7 +7,8 @@ export type CollapsableOptions = {
 	box: string
 	event: string
 	preventDefault: boolean
-	fxDuration: number
+	eventDelayTimeout: number | undefined
+	eventDelayGetAnimationsWithSubtree: boolean
 	accordion: boolean
 	collapsableAll: boolean
 	externalLinks: {
@@ -39,9 +40,15 @@ export class Collapsable {
 		event: 'click',
 		preventDefault: true,
 
-		// Duration of the effect, affects delay between `expand.collapsable`(`collapse.collapsable`) and
-		// `expanded.collapsable` (`collapsed.collapsable`) events are triggered.
-		fxDuration: 0,
+		// The duration of the effect (expanding or collapsing). By default, the delay for `expanded.collapsable` and
+		// `collapsed.collapsable` events is influenced by transitions on box elements. However, since some box elements
+		// may have infinite animations, this option allows setting a maximum delay to ensure the events are dispatched
+		// eventually. Default value of undefined means, that we always wait for all animations to finish.
+		eventDelayTimeout: undefined,
+
+		// By default, `getAnimations` for detecting animations on box elements doesn't include subtree. This options
+		// allows you to include subtree animations as well.
+		eventDelayGetAnimationsWithSubtree: false,
 
 		// Determines, if there could be more than one expanded box in same time.
 		accordion: false,

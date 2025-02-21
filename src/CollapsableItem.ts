@@ -204,6 +204,8 @@ export class CollapsableItem {
 		const extLinks = this.collapsable.getExtLinkById(this.id)
 		extLinks.forEach((extLink) => extLink.toggleClass())
 
+		const animations: Animation[] = []
+
 		this.controlInteractiveElements.forEach((link) => link.setAttribute('aria-expanded', String(action === 'expand')))
 		this.boxElements.forEach((box) => {
 			box.setAttribute('aria-hidden', String(action !== 'expand'))
@@ -213,22 +215,50 @@ export class CollapsableItem {
 			} else {
 				box.removeAttribute('hidden')
 			}
+
+			animations.push(...box.getAnimations({ subtree: this.collapsable.options.eventDelayGetAnimationsWithSubtree }))
 		})
 
 		this.element.classList.remove(removeClass)
 		this.element.classList.add(addClass)
 
-		setTimeout(() => {
+		if (animations.length === 0) {
+			console.log('no animations')
 			this.element.dispatchEvent(finishedEvent)
-		}, options.fxDuration)
+		} else {
+			console.log(animations)
+			this.waitForAnimationsWithTimeout(animations)
+				.then(() => {
+					this.element.dispatchEvent(finishedEvent)
+				})
+				.catch(() => {
+					// For example `AbortError` when animations has been canceled, for example when collapsed before
+					// expanding finishes. In that case, the `finishedEvent` is not dispatched.
+				})
+		}
 
 		return true
 	}
 
+	private waitForAnimationsWithTimeout(animations: Animation[]): Promise<void | Animation[]> {
+		const animationsPromise = Promise.all(animations.map((animation) => animation.finished))
+
+		if (this.collapsable.options.eventDelayTimeout === undefined) {
+			return animationsPromise
+		}
+
+		const timeoutPromise = new Promise<void>((resolve) =>
+			setTimeout(resolve, this.collapsable.options.eventDelayTimeout)
+		)
+
+		return Promise.race([animationsPromise, timeoutPromise])
+	}
+
 	public expand(collapsableEvent: any, data: any, force: boolean): boolean {
+		// When media query doesn't match, we don't want to expand nor collapse the item.
 		// If the item is already expanded, return, unless it is initialisation, where the item is considered expanded
 		// by default, but may not have all its attributes set.
-		if (this.isExpanded && collapsableEvent.type !== 'init.collapsable') {
+		if ((this.media && !this.media.matches) || (this.isExpanded && collapsableEvent.type !== 'init.collapsable')) {
 			return false
 		}
 
@@ -275,10 +305,8 @@ export class CollapsableItem {
 		const { options } = this.collapsable
 
 		// If the item is not expanded, or if we can't collapse all & we are not promised to open something & there is
-		// only one opened box, we can't continue. Also when media query doesn't match, we don't want to collapse the
-		// item.
+		// only one opened box, we can't continue.
 		if (
-			(this.media && !this.media.matches) ||
 			!this.isExpanded ||
 			(!options.collapsableAll && !this.collapsable.promiseOpen && this.collapsable.getExpanded().length < 2)
 		) {
