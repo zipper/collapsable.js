@@ -15,6 +15,11 @@ type ListenersMapItem = {
 	listener: EventListener
 }
 
+type CollapsableElementListeners = {
+	eventName: CollapsableItemEvents
+	listener: EventListener
+}
+
 export interface HTMLCollapsableItem extends HTMLElement {
 	collapsableItem: CollapsableItem
 }
@@ -114,9 +119,9 @@ export class CollapsableItem {
 		})
 	}
 
-	private addHandlers() {
+	private addHandlers(): void {
 		const { options } = this.collapsable
-		const listener = (event: CustomEvent) => {
+		const interactiveElementsListener = (event: CustomEvent) => {
 			const passEvent = event.detail.collapsableEvent ?? event
 
 			if (options.preventDefault) {
@@ -129,15 +134,45 @@ export class CollapsableItem {
 				this.expand(passEvent, null, false)
 			}
 		}
+		const collapsableListeners: CollapsableElementListeners[] = [
+			{
+				eventName: 'expand.collapsable',
+				listener: () => this.boxElements.forEach((box) => (box.dataset.collapsableState = 'expanding'))
+			},
+			{
+				eventName: 'collapse.collapsable',
+				listener: () => this.boxElements.forEach((box) => (box.dataset.collapsableState = 'collapsing'))
+			},
+			{
+				eventName: 'expanded.collapsable',
+				listener: () => this.boxElements.forEach((box) => delete box.dataset.collapsableState)
+			},
+			{
+				eventName: 'collapsed.collapsable',
+				listener: () => this.boxElements.forEach((box) => delete box.dataset.collapsableState)
+			}
+		]
 
 		this.controlInteractiveElements.forEach((link) => {
-			link.addEventListener(options.event, listener as EventListener)
-			this.listenersMap.push({
+			this.addCollapsableEventListener({
 				element: link,
 				eventName: options.event,
-				listener: listener as EventListener
+				listener: interactiveElementsListener as EventListener
 			})
 		})
+
+		collapsableListeners.forEach((collapsableListener) => {
+			this.addCollapsableEventListener({
+				element: this.element,
+				eventName: collapsableListener.eventName,
+				listener: collapsableListener.listener
+			})
+		})
+	}
+
+	private addCollapsableEventListener(item: ListenersMapItem): void {
+		item.element.addEventListener(item.eventName, item.listener)
+		this.listenersMap.push(item)
 	}
 
 	/**
@@ -315,8 +350,8 @@ export class CollapsableItem {
 		this.element.classList.remove(options.classNames.collapsed)
 		this.element.classList.remove(options.classNames.expanded)
 
-		this.listenersMap.forEach(({ element, eventName, listener }) => {
-			element.removeEventListener(eventName, listener)
+		this.listenersMap.forEach((item: ListenersMapItem) => {
+			item.element.removeEventListener(item.eventName, item.listener)
 		})
 
 		this.controlInteractiveElements.forEach((interactiveElement) => {
