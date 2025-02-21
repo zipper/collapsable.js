@@ -7,7 +7,7 @@ export type CollapsableOptions = {
 	box: string
 	event: string
 	preventDefault: boolean
-	fxDuration: 0
+	fxDuration: number
 	accordion: boolean
 	collapsableAll: boolean
 	externalLinks: {
