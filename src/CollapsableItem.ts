@@ -17,7 +17,7 @@ type ListenersMapItem = {
 
 type CollapsableElementListeners = {
 	eventName: CollapsableItemEvents
-	listener: EventListener
+	listener: (event: CollapsableEvent) => void
 }
 
 export interface HTMLCollapsableItem extends HTMLElement {
@@ -121,6 +121,7 @@ export class CollapsableItem {
 
 	private addHandlers(): void {
 		const { options } = this.collapsable
+		const collapsableElement = this.element
 		const interactiveElementsListener = (event: CustomEvent) => {
 			const passEvent = event.detail.collapsableEvent ?? event
 
@@ -137,19 +138,39 @@ export class CollapsableItem {
 		const collapsableListeners: CollapsableElementListeners[] = [
 			{
 				eventName: 'expand.collapsable',
-				listener: () => this.boxElements.forEach((box) => (box.dataset.collapsableState = 'expanding'))
+				listener: (event: CollapsableEvent) => {
+					if (event.target !== collapsableElement) {
+						return
+					}
+					this.boxElements.forEach((box) => (box.dataset.collapsableState = 'expanding'))
+				}
 			},
 			{
 				eventName: 'collapse.collapsable',
-				listener: () => this.boxElements.forEach((box) => (box.dataset.collapsableState = 'collapsing'))
+				listener: (event: CollapsableEvent) => {
+					if (event.target !== collapsableElement) {
+						return
+					}
+					this.boxElements.forEach((box) => (box.dataset.collapsableState = 'collapsing'))
+				}
 			},
 			{
 				eventName: 'expanded.collapsable',
-				listener: () => this.boxElements.forEach((box) => delete box.dataset.collapsableState)
+				listener: (event: CollapsableEvent) => {
+					if (event.target !== collapsableElement) {
+						return
+					}
+					this.boxElements.forEach((box) => delete box.dataset.collapsableState)
+				}
 			},
 			{
 				eventName: 'collapsed.collapsable',
-				listener: () => this.boxElements.forEach((box) => delete box.dataset.collapsableState)
+				listener: (event: CollapsableEvent) => {
+					if (event.target !== collapsableElement) {
+						return
+					}
+					this.boxElements.forEach((box) => delete box.dataset.collapsableState)
+				}
 			}
 		]
 
@@ -165,7 +186,7 @@ export class CollapsableItem {
 			this.addCollapsableEventListener({
 				element: this.element,
 				eventName: collapsableListener.eventName,
-				listener: collapsableListener.listener
+				listener: collapsableListener.listener as EventListener
 			})
 		})
 	}
