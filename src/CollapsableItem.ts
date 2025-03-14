@@ -418,6 +418,7 @@ export class CollapsableItem {
 		this.boxElements.forEach((box) => {
 			box.removeAttribute('aria-hidden')
 			box.removeAttribute('hidden')
+			delete box.dataset.collapsableState
 		})
 
 		this.element.dispatchEvent(new CustomEvent('destroy.collapsable', { bubbles: true }))
