@@ -74,6 +74,7 @@ export class CollapsableExtLink {
 			this.extLink.removeEventListener('click', this.listener)
 			this.extLink.removeAttribute('aria-controls')
 			this.extLink.removeAttribute(this.ariaPerRole)
+			this.extLink.removeAttribute('role')
 		}
 	}
 }
