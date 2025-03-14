@@ -179,6 +179,10 @@ export class CollapsableItem {
 	 * Handling common parts of expanding and collapsing
 	 */
 	private handleExpandCollapse(action: CollapsableItemAction, collapsableEvent: any, data: any): boolean {
+		if (this.media && !this.media.matches) {
+			return false
+		}
+
 		const { options } = this.collapsable
 		let eventName: CollapsableItemEvents = 'expanded.collapsable'
 		let addClass = options.classNames.expanded
