@@ -186,7 +186,7 @@ export class Collapsable {
 	}
 
 	public getExpanded(): CollapsableItem[] {
-		return this.items.filter((item) => item.isExpanded)
+		return this.items.filter((item) => item.isExpanded && (!item.media || (item.media && item.media.matches)))
 	}
 
 	public expandAll(data?: any): void {
