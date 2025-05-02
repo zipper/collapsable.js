@@ -291,9 +291,14 @@ export class CollapsableItem {
 		// This allows us to collapse expanded item even if there might be collapseAll === false option
 		this.collapsable.promiseOpen = true
 
-		// If accordion, we have to collapse previously opened item before expanding; if accordion element hasn't
-		// collapsed, we can't continue
-		if (options.accordion && expandedItem.length && !expandedItem[0].collapse(collapsableEvent, data, force)) {
+		// If `accordion`, we have to collapse a previously opened item (if different from the current item) before
+		// expanding; if the opened item hasn't collapsed, we can't continue
+		if (
+			options.accordion &&
+			expandedItem.length &&
+			this !== expandedItem[0] &&
+			!expandedItem[0].collapse(collapsableEvent, data, force)
+		) {
 			this.collapsable.promiseOpen = false
 			return false
 		}
