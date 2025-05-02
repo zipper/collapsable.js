@@ -158,10 +158,9 @@ export class Collapsable {
 		const collapsableEvent = new CustomEvent('init.collapsable', { bubbles: true })
 
 		const force = !options.collapsableAll
-		this.defaultExpandedItem.forEach((item) => {
-			item.expand(collapsableEvent, null, force)
-		})
 
+		// First, close all the items but the default expanded and then expand the default expanded. The order of
+		// operations is necessary for correct accordion collapsable.
 		this.items
 			.filter((item) => {
 				// When media is being handled, skip items without media or items with different media or not matching media.
@@ -175,6 +174,10 @@ export class Collapsable {
 			.forEach((item) => {
 				item.collapse(collapsableEvent, null, true)
 			})
+
+		this.defaultExpandedItem.forEach((item) => {
+			item.expand(collapsableEvent, null, force)
+		})
 	}
 
 	public getExtLinkById(id?: string): CollapsableExtLink[] {
