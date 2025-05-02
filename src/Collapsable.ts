@@ -151,7 +151,7 @@ export class Collapsable {
 		}
 	}
 
-	public handleDefaultExpanded(): void {
+	public handleDefaultExpanded(media?: MediaQueryList | null): void {
 		this.prepareDefaultExpanded()
 
 		const { options } = this
@@ -163,7 +163,15 @@ export class Collapsable {
 		})
 
 		this.items
-			.filter((item) => !this.defaultExpandedItem.includes(item))
+			.filter((item) => {
+				// When media is being handled, skip items without media or items with different media or not matching media.
+				if (media && (!item.media || item.media.media !== media.media || !media.matches)) {
+					return false
+				}
+
+				// For other items, return whether they should be default expanded or not.
+				return !this.defaultExpandedItem.includes(item)
+			})
 			.forEach((item) => {
 				item.collapse(collapsableEvent, null, true)
 			})
