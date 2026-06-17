@@ -209,7 +209,6 @@ export class CollapsableItem {
 		let addClass = options.classNames.expanded
 		let removeClass = options.classNames.collapsed
 
-		// capitalize first letter
 		if (action === 'collapse') {
 			eventName = 'collapsed.collapsable'
 			addClass = options.classNames.collapsed
@@ -229,9 +228,8 @@ export class CollapsableItem {
 		const extLinks = this.collapsable.getExtLinkById(this.id)
 		extLinks.forEach((extLink) => extLink.toggleClass())
 
-		const animations: Animation[] = []
-
 		this.controlInteractiveElements.forEach((link) => link.setAttribute('aria-expanded', String(action === 'expand')))
+
 		this.boxElements.forEach((box) => {
 			box.setAttribute('aria-hidden', String(action !== 'expand'))
 
@@ -240,25 +238,35 @@ export class CollapsableItem {
 			} else {
 				box.removeAttribute('hidden')
 			}
-
-			animations.push(...box.getAnimations({ subtree: this.collapsable.options.eventDelayGetAnimationsWithSubtree }))
 		})
 
 		this.element.classList.remove(removeClass)
 		this.element.classList.add(addClass)
 
-		if (animations.length === 0) {
-			this.element.dispatchEvent(finishedEvent)
-		} else {
-			this.waitForAnimationsWithTimeout(animations)
-				.then(() => {
-					this.element.dispatchEvent(finishedEvent)
-				})
-				.catch(() => {
-					// For example `AbortError` when animations has been canceled, for example when collapsed before
-					// expanding finishes. In that case, the `finishedEvent` is not dispatched.
-				})
-		}
+		// Defer getAnimations to allow styles/layout to flush
+		requestAnimationFrame(() => {
+			const animations: Animation[] = []
+			this.boxElements.forEach((box) => {
+				animations.push(
+					...box.getAnimations({
+						subtree: this.collapsable.options.eventDelayGetAnimationsWithSubtree
+					})
+				)
+			})
+
+			if (animations.length === 0) {
+				this.element.dispatchEvent(finishedEvent)
+			} else {
+				this.waitForAnimationsWithTimeout(animations)
+					.then(() => {
+						this.element.dispatchEvent(finishedEvent)
+					})
+					.catch(() => {
+						// For example `AbortError` when animations has been canceled, for example when collapsed before
+						// expanding finishes. In that case, the `finishedEvent` is not dispatched.
+					})
+			}
+		})
 
 		return true
 	}
