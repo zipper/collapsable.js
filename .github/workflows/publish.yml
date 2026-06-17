@@ -10,16 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@v4
-
-      - name: Import GPG 🔑
-        uses: crazy-max/ghaction-import-gpg@v5.2.0
-        with:
-          gpg_private_key: ${{ secrets.GPG_SIGNING_KEY }}
-          passphrase: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
+        uses: actions/checkout@v5
 
       - name: Setup Node 📦
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: lts/*
           cache: npm
@@ -30,24 +24,21 @@ jobs:
       - name: Build 🔨
         run: npm run build
 
-      - name: Sign files with GPG 🔐
-        run: |
-          gpg --local-user 9A80A82A --armor --detach-sign dist/Collapsable.js
-          gpg --local-user 9A80A82A --armor --detach-sign dist/Collapsable.min.js
-
-      - name: Download artifacts 🧩
+      - name: Upload artifacts 🧩
         uses: actions/upload-artifact@v4
         with:
           name: dist-files
           path: dist/
 
   release:
-    name: Release
+    name: GitHub Release
     runs-on: ubuntu-latest
     needs: [build]
+    permissions:
+      contents: write
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Download artifacts 🧩
         uses: actions/download-artifact@v4
@@ -56,24 +47,25 @@ jobs:
           path: dist/
 
       - name: Create release draft 🕊️
-        uses: softprops/action-gh-release@v2
-        with:
-          draft: true
-          files: |
-            dist/Collapsable.js
-            dist/Collapsable.js.map
-            dist/Collapsable.js.asc
-            dist/Collapsable.min.js
+        run: |
+          gh release create "${{ github.ref_name }}" --draft --target "${{ github.sha }}" \
+            dist/Collapsable.js \
+            dist/Collapsable.js.map \
+            dist/Collapsable.min.js \
             dist/Collapsable.min.js.map
-            dist/Collapsable.min.js.asc
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  publish:
-    name: Publish
+  publishPublic:
+    name: Publish (public)
     runs-on: ubuntu-latest
     needs: [build]
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Download artifacts 🧩
         uses: actions/download-artifact@v4
@@ -82,12 +74,34 @@ jobs:
           path: dist/
 
       - name: Setup Node 📦
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: lts/*
           registry-url: 'https://registry.npmjs.org'
 
       - name: Publish release 🕊️
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        # `npm publish --provenance` intermittently fails with a Sigstore transparency log
+        # 409 (`TLOG_CREATE_ENTRY_ERROR`). The tlog entry is created before the registry
+        # upload, so on that error nothing is published and a fresh attempt (new attestation)
+        # succeeds. Retry a few times; if a previous attempt already published the version,
+        # treat the publish conflict as success.
+        run: |
+          set +e
+          for attempt in 1 2 3; do
+            echo "::group::npm publish attempt $attempt"
+            output=$(npm publish --provenance --access public 2>&1)
+            status=$?
+            echo "$output"
+            echo "::endgroup::"
+            if [ $status -eq 0 ]; then
+              exit 0
+            fi
+            if echo "$output" | grep -q "EPUBLISHCONFLICT\|cannot publish over"; then
+              echo "Version already published — treating as success."
+              exit 0
+            fi
+            echo "Attempt $attempt failed (exit $status). Retrying in 15s…"
+            sleep 15
+          done
+          echo "npm publish failed after 3 attempts."
+          exit 1
