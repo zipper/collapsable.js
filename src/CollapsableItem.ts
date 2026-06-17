@@ -393,7 +393,7 @@ export class CollapsableItem {
 	private handleMediaChange(event: MediaQueryListEvent): void {
 		if (event.matches) {
 			this.initialize()
-			this.collapsable.handleDefaultExpanded()
+			this.collapsable.handleDefaultExpanded(this.media)
 		} else {
 			this.destroy()
 		}
