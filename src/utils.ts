@@ -36,3 +36,37 @@ export let caUid = 0
 export function getUid() {
 	return 'ca-uid-' + caUid++
 }
+
+// Remembers original attribute values before collapsable modifies them, so they can be restored on destroy.
+export class AttributeSnapshot {
+	private store = new Map<HTMLElement, Record<string, string | null>>()
+
+	public remember(element: HTMLElement, name: string): void {
+		let attrs = this.store.get(element)
+		if (!attrs) {
+			attrs = {}
+			this.store.set(element, attrs)
+		}
+		// Only the first (original) value is stored, repeated calls won't overwrite it.
+		if (!(name in attrs)) {
+			attrs[name] = element.getAttribute(name)
+		}
+	}
+
+	public restore(element: HTMLElement, name: string): void {
+		const attrs = this.store.get(element)
+		if (!attrs || !(name in attrs)) {
+			return
+		}
+		const value = attrs[name]
+		if (value === null) {
+			element.removeAttribute(name)
+		} else {
+			element.setAttribute(name, value)
+		}
+	}
+
+	public clear(): void {
+		this.store.clear()
+	}
+}

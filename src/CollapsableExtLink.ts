@@ -1,5 +1,6 @@
 import { CollapsableItem } from './CollapsableItem'
 import { Collapsable } from './Collapsable'
+import { AttributeSnapshot } from './utils'
 
 export class CollapsableExtLink {
 	private readonly collapsable: Collapsable
@@ -9,6 +10,8 @@ export class CollapsableExtLink {
 
 	private listener: EventListener | undefined
 	private ariaPerRole!: 'aria-expanded' | 'aria-selected' // always set by `this.prepareDOM()` called from constructor
+
+	private originalAttributes = new AttributeSnapshot()
 
 	public constructor(
 		collapsable: Collapsable,
@@ -29,9 +32,11 @@ export class CollapsableExtLink {
 	}
 
 	private prepareDOM(): void {
+		this.originalAttributes.remember(this.extLink, 'aria-controls')
 		this.extLink.setAttribute('aria-controls', this.collapsableItem.boxElements.map((box) => box.id).join(' '))
 
 		if (this.extLink instanceof HTMLAnchorElement && !this.extLink.role) {
+			this.originalAttributes.remember(this.extLink, 'role')
 			this.extLink.role = 'button'
 		}
 
@@ -41,6 +46,7 @@ export class CollapsableExtLink {
 			this.ariaPerRole = 'aria-selected'
 		}
 
+		this.originalAttributes.remember(this.extLink, this.ariaPerRole)
 		this.extLink.setAttribute(this.ariaPerRole, String(this.collapsableItem.isExpanded))
 	}
 
@@ -72,9 +78,10 @@ export class CollapsableExtLink {
 	public destroy(): void {
 		if (this.listener) {
 			this.extLink.removeEventListener('click', this.listener)
-			this.extLink.removeAttribute('aria-controls')
-			this.extLink.removeAttribute(this.ariaPerRole)
-			this.extLink.removeAttribute('role')
+			this.originalAttributes.restore(this.extLink, 'aria-controls')
+			this.originalAttributes.restore(this.extLink, this.ariaPerRole)
+			this.originalAttributes.restore(this.extLink, 'role')
+			this.originalAttributes.clear()
 		}
 	}
 }

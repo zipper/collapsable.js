@@ -1,5 +1,5 @@
 import { Collapsable, CollapsableEvent } from './Collapsable'
-import { getUid } from './utils'
+import { AttributeSnapshot, getUid } from './utils'
 
 type CollapsableItemAction = 'expand' | 'collapse'
 type CollapsableItemEvents =
@@ -39,6 +39,8 @@ export class CollapsableItem {
 	private _isExpanded = true
 
 	private listenersMap: ListenersMapItem[] = []
+
+	private originalAttributes = new AttributeSnapshot()
 
 	public constructor(collapsable: Collapsable, element: HTMLElement) {
 		this.collapsable = collapsable
@@ -85,6 +87,10 @@ export class CollapsableItem {
 			box.id = boxItemId
 
 			ariaControlsAttr.push(boxItemId)
+
+			// Snapshot before any modification (hidden/aria-hidden are set later in handleExpandCollapse).
+			this.originalAttributes.remember(box, 'hidden')
+			this.originalAttributes.remember(box, 'aria-hidden')
 		})
 
 		this.controlElements.forEach((control) => {
@@ -105,9 +111,15 @@ export class CollapsableItem {
 			}
 
 			interactiveElement.classList.add(options.classNames.interactiveElement)
+
+			this.originalAttributes.remember(interactiveElement, 'aria-controls')
 			interactiveElement.setAttribute('aria-controls', ariaControlsAttr.join(' '))
 
+			// aria-expanded is set later in handleExpandCollapse, snapshot it now.
+			this.originalAttributes.remember(interactiveElement, 'aria-expanded')
+
 			if (interactiveElement.tagName.toLowerCase() === 'a') {
+				this.originalAttributes.remember(interactiveElement, 'role')
 				interactiveElement.setAttribute('role', 'button')
 			}
 
@@ -423,18 +435,21 @@ export class CollapsableItem {
 				interactiveElement.parentElement.innerHTML = interactiveElement.innerHTML
 			} else {
 				interactiveElement.classList.remove(options.classNames.interactiveElement)
-				interactiveElement.removeAttribute('aria-controls')
-				interactiveElement.removeAttribute('aria-expanded')
+				this.originalAttributes.restore(interactiveElement, 'aria-controls')
+				this.originalAttributes.restore(interactiveElement, 'aria-expanded')
+				this.originalAttributes.restore(interactiveElement, 'role')
 			}
 		})
 
 		this.boxElements.forEach((box) => {
-			box.removeAttribute('aria-hidden')
-			box.removeAttribute('hidden')
+			this.originalAttributes.restore(box, 'aria-hidden')
+			this.originalAttributes.restore(box, 'hidden')
 			delete box.dataset.collapsableState
 		})
 
 		this.element.dispatchEvent(new CustomEvent('destroy.collapsable', { bubbles: true }))
+
+		this.originalAttributes.clear()
 	}
 }
 
