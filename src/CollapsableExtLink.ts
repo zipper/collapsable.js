@@ -40,10 +40,10 @@ export class CollapsableExtLink {
 			this.extLink.role = 'button'
 		}
 
-		if (this.extLink instanceof HTMLButtonElement || this.extLink.role === 'button') {
-			this.ariaPerRole = 'aria-expanded'
-		} else if (this.extLink.role === 'tab') {
+		if (this.extLink.role === 'tab') {
 			this.ariaPerRole = 'aria-selected'
+		} else if (this.extLink instanceof HTMLButtonElement || this.extLink.role === 'button') {
+			this.ariaPerRole = 'aria-expanded'
 		}
 
 		this.originalAttributes.remember(this.extLink, this.ariaPerRole)
