@@ -133,6 +133,8 @@ export class Collapsable {
 		const defaultExpanded = this.items.filter((item) => item.isDefaultExpanded)
 		const defaultExpandedFromUrl = hash ? this.items.find((item) => item.id === hash) : undefined
 
+		this.defaultExpandedItem = []
+
 		if (defaultExpandedFromUrl) {
 			this.defaultExpandedItem.push(defaultExpandedFromUrl)
 		}
@@ -159,23 +161,19 @@ export class Collapsable {
 
 		const force = !options.collapsableAll
 
+		// When media is being handled, skip items without media or items with different media or not matching media.
+		const isHandled = (item: CollapsableItem): boolean =>
+			!media || (item.media !== null && item.media.media === media.media && media.matches)
+
 		// First, close all the items but the default expanded and then expand the default expanded. The order of
 		// operations is necessary for correct accordion collapsable.
 		this.items
-			.filter((item) => {
-				// When media is being handled, skip items without media or items with different media or not matching media.
-				if (media && (!item.media || item.media.media !== media.media || !media.matches)) {
-					return false
-				}
-
-				// For other items, return whether they should be default expanded or not.
-				return !this.defaultExpandedItem.includes(item)
-			})
+			.filter((item) => isHandled(item) && !this.defaultExpandedItem.includes(item))
 			.forEach((item) => {
 				item.collapse(collapsableEvent, null, true)
 			})
 
-		this.defaultExpandedItem.forEach((item) => {
+		this.defaultExpandedItem.filter(isHandled).forEach((item) => {
 			item.expand(collapsableEvent, null, force)
 		})
 	}
